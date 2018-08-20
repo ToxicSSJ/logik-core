@@ -810,7 +810,7 @@ public class PropositionalTests {
 		
 	}
 
-    /*@Test
+    @Test
     public void UGATest() {
 
         Proof proof = ProofParser.fromString("{Wx & Bx=>(∀x)(Wx & Bx)}");
@@ -852,19 +852,18 @@ public class PropositionalTests {
         if(result.getType() != ResultType.CORRECT)
             fail("El resultado fue " + result.getType() + "!");
 
-    } */
+    }
 
     @Test
     public void UGDTest() {
 
-        Proof proof = ProofParser.fromString("{Ax=>(∀x)(Bx | (∀x)(Ax))}");
+        Proof proof = ProofParser.fromString("{Ax=>(∀x)(Bx | Ax)}");
 
-        proof.addLine(ProofParser.fromString("(∀x) Ax", "1 UG"));
-        proof.addLine(ProofParser.fromString("(∀x) Ax | Bx", "2 ADD"));
-        proof.addLine(ProofParser.fromString("Bx | (∀x)(Ax)", "3 COM"));
-        proof.addLine(ProofParser.fromString("(∀x)(Bx | (∀x)(Ax))", "4 UG"));
+        proof.addLine(ProofParser.fromString("Ax | Bx", "1 ADD"));
+		proof.addLine(ProofParser.fromString("Bx | Ax", "2 COM"));
+        proof.addLine(ProofParser.fromString("(∀x)(Bx | Ax)", "3 UG"));
 
-        ProofResult result = proof.build(true);
+        ProofResult result = proof.build( false);
 
         if(result.getType() != ResultType.CORRECT)
             fail("El resultado fue " + result.getType() + "!");

@@ -75,18 +75,14 @@ public enum QuantifierGeneralizationRuleType implements CategoryType.Rule {
 
                         LinkedList<Formula> quantifiedFormulas = f1.getQuantifiedFormulas(f -> {
 
-                            System.out.println("DEBUG :: FORMULA :: " + f);
-
                             for(Action action : f.getAttached())
                                 if(action.getType().is(Node.ActionType.UNIVERSAL_QUANTIFIER, Node.ActionType.EXISTENTIAL_QUANTIFIER))
-                                    if (action.getQuantifier().getType() == k)
-                                        return true;
+                                    if (action.getQuantifier().getType() == k )
+                                        return false;
 
-                            return false;
+                            return true;
 
                         });
-
-                        System.out.println("DEBUG :: TAMAÑO DE quantifiedFormulas : " + quantifiedFormulas.size());
 
                         if(quantifiedFormulas.size() > 0)
                             return f1;

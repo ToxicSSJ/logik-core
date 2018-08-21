@@ -722,22 +722,6 @@ public class PropositionalTests {
 	}
 	
 	@Test
-	public void UIFTest() {
-		
-		Proof proof = ProofParser.fromString("{(∀z)(∀y)((∀y)Eyz & (∀x)(∀z)Axzy)=>Eua}");
-    	proof.addLine(ProofParser.fromString("(∀y)((∀y)Eya & (∀x)(∀z)Axzy)", "1 UI"));
-    	proof.addLine(ProofParser.fromString("(∀y)Eya & (∀x)(∀z)Axzu", "2 UI"));
-    	proof.addLine(ProofParser.fromString("(∀y)Eya", "3 SIMP"));
-    	proof.addLine(ProofParser.fromString("Eua", "4 UI"));
-    	
-    	ProofResult result = proof.build(false);
-		
-    	if(result.getType() != ResultType.CORRECT)
-    		fail("El resultado fue " + result.getType() + "!");
-		
-	}
-	
-	@Test
 	public void EIATest() {
 		
 		Proof proof = ProofParser.fromString("{(∃x)Ax=>Aa}");
@@ -879,6 +863,42 @@ public class PropositionalTests {
 		proof.addLine(ProofParser.fromString("(∀x)Bx", "3 UG"));
 
 		ProofResult result = proof.build( false);
+
+		if(result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void UGFTest() {
+
+		Proof proof = ProofParser.fromString("{Ax | Bx // ~Ax=>(∀x)Bx}");
+
+		proof.addLine(ProofParser.fromString("Bx", "1,2 DS"));
+		proof.addLine(ProofParser.fromString("(∀x)Bx", "3 UG"));
+
+		ProofResult result = proof.build( false);
+
+		if(result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void UGGTest() {
+
+		Proof proof = ProofParser.fromString("{A → ~(Bx & C) // A & C=>(∀x)~Bx}");
+		proof.addLine(ProofParser.fromString("A", "2 SIMP"));
+		proof.addLine(ProofParser.fromString("~(Bx & C)", "1,3 MP"));
+		proof.addLine(ProofParser.fromString("~Bx | ~C", "4 DM"));
+		proof.addLine(ProofParser.fromString("C & A", "2 COM"));
+		proof.addLine(ProofParser.fromString("C", "6 SIMP"));
+		proof.addLine(ProofParser.fromString("~~C", "7 DN"));
+		proof.addLine(ProofParser.fromString("~C | ~Bx", "5 COM"));
+		proof.addLine(ProofParser.fromString("~Bx", "9,8 DS"));
+		proof.addLine(ProofParser.fromString("(∀x)~Bx", "10 UG"));
+
+		ProofResult result = proof.build(false);
 
 		if(result.getType() != ResultType.CORRECT)
 			fail("El resultado fue " + result.getType() + "!");

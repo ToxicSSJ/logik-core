@@ -870,6 +870,21 @@ public class PropositionalTests {
 
     }
 
+	@Test
+	public void UGETest() {
+
+		Proof proof = ProofParser.fromString("{Ax | Bx // ~Ax=>(∀x)Bx}");
+
+		proof.addLine(ProofParser.fromString("Bx", "1,2 DS"));
+		proof.addLine(ProofParser.fromString("(∀x)Bx", "3 UG"));
+
+		ProofResult result = proof.build( false);
+
+		if(result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
     @Test
 	public void implicationCTest() {
 		

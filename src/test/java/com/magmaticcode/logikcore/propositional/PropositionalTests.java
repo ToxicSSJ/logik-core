@@ -872,21 +872,6 @@ public class PropositionalTests {
 	@Test
 	public void UGFTest() {
 
-		Proof proof = ProofParser.fromString("{Ax | Bx // ~Ax=>(∀x)Bx}");
-
-		proof.addLine(ProofParser.fromString("Bx", "1,2 DS"));
-		proof.addLine(ProofParser.fromString("(∀x)Bx", "3 UG"));
-
-		ProofResult result = proof.build( false);
-
-		if(result.getType() != ResultType.CORRECT)
-			fail("El resultado fue " + result.getType() + "!");
-
-	}
-
-	@Test
-	public void UGGTest() {
-
 		Proof proof = ProofParser.fromString("{A → ~(Bx & C) // A & C=>(∀x)~Bx}");
 		proof.addLine(ProofParser.fromString("A", "2 SIMP"));
 		proof.addLine(ProofParser.fromString("~(Bx & C)", "1,3 MP"));

@@ -320,7 +320,7 @@ public class Proof {
 					
 				}
 
-                case UNIVERSAL_GENERALIZATION: {
+				case UNIVERSAL_GENERALIZATION: {
 
 					Formula ug = QuantifierGeneralizationRuleType.UNIVERSAL_GENERALIZATION.getActioner().action(tested.get(steps.get(0).getStep() - 1), proof.getFormula());
 
@@ -332,6 +332,17 @@ public class Proof {
 
 				}
 
+                case EXISTENTIAL_GENERALIZATION: {
+
+					Formula eg = QuantifierGeneralizationRuleType.EXISTENTIAL_GENERALIZATION.getActioner().action(tested.get(steps.get(0).getStep() - 1), proof.getFormula());
+
+					if(eg.equals(proof.getFormula()))
+						tested.add(eg);
+					else throw new PropositionalLogicException("El paso " + (tested.size() + 1) + " es incorrecto!");
+
+					break T;
+
+				}
 				default: break T;
 		
 			}

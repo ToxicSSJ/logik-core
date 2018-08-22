@@ -9,7 +9,7 @@ import com.magmaticcode.logikcore.propositional.bundle.proof.Proof;
 import com.magmaticcode.logikcore.propositional.bundle.proof.ProofResult;
 import com.magmaticcode.logikcore.propositional.bundle.proof.ProofResult.ResultType;
 
-public class PropositionalTests {
+public class 	PropositionalTests {
 
 	@Test
 	public void conjunctionTest() {
@@ -914,6 +914,35 @@ public class PropositionalTests {
         proof.addLine(ProofParser.fromString("Ms", "3,2 MP"));
 
         ProofResult result = proof.build(false);
+
+        if (result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType() + "!");
+
+    }
+/**
+    @Test
+    public void parcial1ManuelSierraTuesday(){ // Ya lo termino ahorita
+
+	    Proof proof = ProofParser.fromString("{(S → K) & (U → V)//W → (S | U)=>W → (T | V)}");
+
+
+    }
+*/
+    @Test
+    public void EGATest() {     // Excercise 86, Part II, number 3
+
+	    Proof proof = ProofParser.fromString("{(∃x)(Ax & (∀y)(By → Cxy))//(∃x)Ax → Bj=>(∃x)Cxj}");
+	    proof.addLine(ProofParser.fromString("Aa & (∀y)(By → Cay)", "1 EI"));
+	    proof.addLine(ProofParser.fromString("Aa", "3 SIMP"));
+	    proof.addLine(ProofParser.fromString("(∃x)(Ax)", "4 EG"));
+	    proof.addLine(ProofParser.fromString("Bj", "2,5 MP"));
+	    proof.addLine(ProofParser.fromString("(∀y)(By → Cay) & Aa", "3 COM"));
+	    proof.addLine(ProofParser.fromString("(∀y)(By → Cay)", "7 SIMP"));
+	    proof.addLine(ProofParser.fromString("Bj → Caj", "8 UI"));
+	    proof.addLine(ProofParser.fromString("Caj", "6,9 MP"));
+	    proof.addLine(ProofParser.fromString("(∃x)Cxj", "10 EG"));
+
+        ProofResult result = proof.build(true);
 
         if (result.getType() != ResultType.CORRECT)
             fail("El resultado fue " + result.getType() + "!");

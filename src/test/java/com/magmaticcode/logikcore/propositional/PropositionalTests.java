@@ -929,7 +929,7 @@ public class 	PropositionalTests {
     }
 */
     @Test
-    public void EGATest() {     // Excercise 86, Part II, number 3
+    public void EGATest() {     // Excercise 8.6, Part II, number 3
 
 	    Proof proof = ProofParser.fromString("{(∃x)(Ax & (∀y)(By → Cxy))//(∃x)Ax → Bj=>(∃x)Cxj}");
 	    proof.addLine(ProofParser.fromString("Aa & (∀y)(By → Cay)", "1 EI"));
@@ -947,7 +947,97 @@ public class 	PropositionalTests {
         if (result.getType() != ResultType.CORRECT)
             fail("El resultado fue " + result.getType() + "!");
 
+	}
+
+	@Test
+    public void EGBTest() {
+
+    	Proof proof = ProofParser.fromString("{(∀y)(Sy → Wy)//(∀y)Sy=>(∃x)Wx}");
+    	proof.addLine((ProofParser.fromString("Sy → Wy", "1 UI")));
+    	proof.addLine(ProofParser.fromString("Sy", "2 UI"));
+    	proof.addLine(ProofParser.fromString("Wy", "3,4 MP"));
+    	proof.addLine(ProofParser.fromString("(∃x)Wx", "5 EG"));
+
+		ProofResult result = proof.build(true);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+	}
+
+	@Test
+	public void EGCTest()  {
+
+        Proof proof = ProofParser.fromString("{(∀x)(Jx → Kx)//(∃x)(Jx & Lx)=>(∃x)(Lx & Kx)}");
+        proof.addLine(ProofParser.fromString("Jy & Ly", "2 EI"));
+        proof.addLine(ProofParser.fromString("Jy → Ky", "1 UI"));
+        proof.addLine(ProofParser.fromString("Jy", "3 SIMP"));
+        proof.addLine(ProofParser.fromString("Ly & Jy", "3 COM"));
+        proof.addLine(ProofParser.fromString("Ly", "6 SIMP"));
+        proof.addLine(ProofParser.fromString("Ky", "4,5 MP"));
+        proof.addLine(ProofParser.fromString("Ly & Ky", "7,8 CONJ"));
+        proof.addLine(ProofParser.fromString("(∃x)(Lx & Kx)", "9 EG"));
+
+        ProofResult result = proof.build(true);
+
+        if (result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType() + "!");
+
     }
+
+	@Test
+    public void EGDTest() {
+
+    	Proof proof = ProofParser.fromString("{(∀x)((Aa | Bx) → Cx) //(∃x)Ax=>(∃x)Cx}");
+        proof.addLine(ProofParser.fromString("Aa", "2 EI"));
+        proof.addLine(ProofParser.fromString("(Aa | Ba) → Ca", "1 UI"));
+        proof.addLine(ProofParser.fromString("Aa | Ba", "3 ADD"));
+        proof.addLine(ProofParser.fromString("Ca", "4,5 MP"));
+        proof.addLine(ProofParser.fromString("(∃x)Cx", "6 EG"));
+
+    	ProofResult result = proof.build(true);
+
+    	if (result.getType() != ResultType.CORRECT)
+    		fail("El resultado fue " + result.getType());
+
+	}
+
+	@Test
+	public void EGFTest() {
+
+        Proof proof = ProofParser.fromString("{(∀x)((Aa | Bx) → Cx) //(∃x)Bx=>(∃x)Cx}");
+        proof.addLine(ProofParser.fromString("Ba", "2 EI"));
+        proof.addLine(ProofParser.fromString("Ba | Aa", "3 ADD"));
+        proof.addLine(ProofParser.fromString("Aa | Ba", "4 COM"));
+        proof.addLine(ProofParser.fromString("(Aa | Ba) → Ca", "1 UI"));
+        proof.addLine(ProofParser.fromString("Ca", "6,5 MP"));
+        proof.addLine(ProofParser.fromString("(∃x)Cx", "7 EG"));
+
+        ProofResult result = proof.build((true));
+
+        if (result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType());
+	}
+
+	@Test
+	public void EGGTest() {
+
+        Proof proof = ProofParser.fromString("{(∃x)Kx → (∀x)(Lx →  Mx)//Kc & Lc =>Mc}");
+        proof.addLine(ProofParser.fromString("Kc", "2 SIMP"));
+        proof.addLine(ProofParser.fromString("(∃x)Kx", "3 EG"));
+        proof.addLine(ProofParser.fromString("(∀x)(Lx → Mx)", "1,4 MP"));
+        proof.addLine(ProofParser.fromString("Lc & Kc", "2 COM"));
+        proof.addLine(ProofParser.fromString("Lc", "6 SIMP"));
+        proof.addLine(ProofParser.fromString("Lc → Mc", "5 UI"));
+        proof.addLine(ProofParser.fromString("Mc", "8,7 MP"));
+
+        ProofResult result = proof.build(true);
+
+        if (result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType());
+
+    }
+
+
 
 	@Test
 	public void randomTest() {
@@ -1048,4 +1138,6 @@ public class 	PropositionalTests {
 
 	}
 
+		@Test
+	public void 	
 }

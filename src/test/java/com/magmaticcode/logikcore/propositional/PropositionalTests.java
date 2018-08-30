@@ -1138,6 +1138,4 @@ public class 	PropositionalTests {
 
 	}
 
-		@Test
-	public void 	
 }

@@ -24,22 +24,23 @@ public abstract class Node {
 	public Node master;   // Axioma.
 	public UUID uniqueID; // ID por el cual se va a identificar el axioma.
 
-       /**
-		* Este método genera un número random
-		* y se lo delega a UUID de la clase.
-		*
-		*/
+
+    /**
+     * Este método genera un número random
+     * y se lo delega a UUID de la clase.
+     *
+     */
 	public Node() {
 		this.uniqueID = UUID.randomUUID();
 	}
 
 	/**
-		* Método setter del uniqueID,
-		* el cual permite cambiar el ID de un axioma.
-		*
-		* @param uniqueID
-		*
-		*/
+     * Método setter del uniqueID,
+     * el cual permite cambiar el ID de un axioma.
+     *
+     * @param uniqueID
+     *
+     */
 	public Node(UUID uniqueID) {
 		this.uniqueID = uniqueID;
 	}

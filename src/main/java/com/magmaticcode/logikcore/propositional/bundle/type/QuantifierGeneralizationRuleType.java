@@ -135,7 +135,7 @@ public enum QuantifierGeneralizationRuleType implements CategoryType.Rule {
 			formulas.removeIf(k -> {
 
 				for(Action c : k.getAttached())
-					if(c.getType().is(Node.ActionType.UNIVERSAL_QUANTIFIER, Node.ActionType.EXISTENTIAL_QUANTIFIER))
+					if(c.getType().is(Node.ActionType.EXISTENTIAL_QUANTIFIER, Node.ActionType.UNIVERSAL_QUANTIFIER))
 						if(c.getQuantifier().getType() == to)
 							return false;
 
@@ -170,7 +170,7 @@ public enum QuantifierGeneralizationRuleType implements CategoryType.Rule {
 						LinkedList<Formula> quantifiedFormulas = f1.getQuantifiedFormulas(f -> {
 
 							for(Action action : f.getAttached())
-								if(action.getType().is(Node.ActionType.UNIVERSAL_QUANTIFIER, Node.ActionType.EXISTENTIAL_QUANTIFIER))
+								if(action.getType().is(Node.ActionType.EXISTENTIAL_QUANTIFIER, Node.ActionType.UNIVERSAL_QUANTIFIER))
 									if (action.getQuantifier().getType() == k )
 										return false;
 

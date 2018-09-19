@@ -890,6 +890,21 @@ public class 	PropositionalTests {
 
 	}
 
+	@Test
+	public void UGGTest() {
+		Proof proof = ProofParser.fromString("{(∀x)(Px → Dx)//(∀x)(Dx → Cx)=>(∀x)(Px → cx)}");
+
+		proof.addLine(ProofParser.fromString("Py → Dy", "1 UI"));		        //3
+		proof.addLine(ProofParser.fromString("Dy → Cy", "2 UI"));	          // 4
+		proof.addLine(ProofParser.fromString("(Py → Cy)", "3,4 HS"));	    // 5
+		proof.addLine(ProofParser.fromString("(∀x)(Px → cx)", "5 UG")); //6
+
+		ProofResult result = proof.build(true);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+	}
+
     @Test
 	public void implicationCTest() {
 		
@@ -920,7 +935,7 @@ public class 	PropositionalTests {
 
     }
 /**
-    @Test
+    //@Test
     public void parcial1ManuelSierraTuesday(){ // Ya lo termino ahorita
 
 	    Proof proof = ProofParser.fromString("{(S → K) & (U → V)//W → (S | U)=>W → (T | V)}");
@@ -929,7 +944,7 @@ public class 	PropositionalTests {
     }
 */
     @Test
-    public void EGATest() {     // Excercise 8.6, Part II, number 3
+    public void EGATest() {     // Exercise 8.6, Part II, number 3
 
 	    Proof proof = ProofParser.fromString("{(∃x)(Ax & (∀y)(By → Cxy))//(∃x)Ax → Bj=>(∃x)Cxj}");
 	    proof.addLine(ProofParser.fromString("Aa & (∀y)(By → Cay)", "1 EI"));   //3
@@ -1146,16 +1161,17 @@ public class 	PropositionalTests {
 		proof.addLine(ProofParser.fromString("~L", "3 SIMP"));                    //4
 		proof.addLine(ProofParser.fromString("~(~L & M) & (~L & O)", "2 COM"));   //5
 		proof.addLine(ProofParser.fromString("~(~L & M)", "5 SIMP"));             //6
-		proof.addLine(ProofParser.fromString("~~~L | ~M", "6 DM"));               //7
+		proof.addLine(ProofParser.fromString("L | ~M", "6 DM"));                  //7
 		proof.addLine(ProofParser.fromString("L | ~M", "7 DN"));                  //8
+		// The step 8 have a problem with the double negation because there isn't any negation
 		proof.addLine(ProofParser.fromString("~M", "8,4 DS"));                    //9
 		proof.addLine(ProofParser.fromString("~L & ~M ", "4,9 CONJ"));            //10
 		proof.addLine(ProofParser.fromString("~(L | M)", "10 DM"));               //11
 		proof.addLine(ProofParser.fromString("N & O", "1,11 DS"));                //12
 		proof.addLine(ProofParser.fromString("N", "12 SIMP"));                    //13
-		proof.addLine(ProofParser.fromString("~L & N", "4,12 CONJ"));             //14
+		proof.addLine(ProofParser.fromString("~L & N", "4,13 CONJ"));             //14
 
-		ProofResult result = proof.build(false);
+		ProofResult result = proof.build(true);
 
 		if (result.getType() != ResultType.CORRECT)
 			fail("El resultado fue " + result.getType() + "!");

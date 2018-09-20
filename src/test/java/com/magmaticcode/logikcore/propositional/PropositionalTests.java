@@ -934,17 +934,33 @@ public class 	PropositionalTests {
             fail("El resultado fue " + result.getType() + "!");
 
     }
-/**
-    //@Test
-    public void parcial1ManuelSierraTuesday(){ // Ya lo termino ahorita
 
-	    Proof proof = ProofParser.fromString("{(S → K) & (U → V)//W → (S | U)=>W → (T | V)}");
+	@Test
+	public void EGATest(){
+		Proof proof = ProofParser.fromString("{Aa=>((∃x)(Ax))}");
 
+		proof.addLine(ProofParser.fromString("(∃x)(Ax)", "1 EG")); // 2
 
-    }
-*/
+		ProofResult result = proof.build(true);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+	}
+
+	@Test
+	public void EGBTest(){
+
+		Proof proof = ProofParser.fromString("{Ax=>((∃y)(Ay))}");
+
+		proof.addLine(ProofParser.fromString("(∃y)(Ay)", "1 EG")); // 2
+
+		ProofResult result = proof.build(true);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+	}
     @Test
-    public void EGATest() {     // Exercise 8.6, Part II, number 3
+    public void EGCTest() {     // Exercise 8.6, Part II, number 3
 
 	    Proof proof = ProofParser.fromString("{(∃x)(Ax & (∀y)(By → Cxy))//(∃x)Ax → Bj=>(∃x)Cxj}");
 	    proof.addLine(ProofParser.fromString("Aa & (∀y)(By → Cay)", "1 EI"));   //3
@@ -965,7 +981,7 @@ public class 	PropositionalTests {
 	}
 
 	@Test
-    public void EGBTest() {
+    public void EGDTest() {
 
     	Proof proof = ProofParser.fromString("{(∀y)(Sy → Wy)//(∀y)Sy=>(∃x)Wx}");
     	proof.addLine((ProofParser.fromString("Sy → Wy", "1 UI")));  //3
@@ -980,7 +996,7 @@ public class 	PropositionalTests {
 	}
 
 	@Test
-	public void EGCTest()  {
+	public void EGETest()  {
 
         Proof proof = ProofParser.fromString("{(∀x)(Jx → Kx)//(∃x)(Jx & Lx)=>(∃x)(Lx & Kx)}");
         proof.addLine(ProofParser.fromString("Jy & Ly", "2 EI"));         //3
@@ -1000,7 +1016,7 @@ public class 	PropositionalTests {
     }
 
 	@Test
-    public void EGDTest() {
+    public void EGFTest() {
 
     	Proof proof = ProofParser.fromString("{(∀x)((Aa | Bx) → Cx) //(∃x)Ax=>(∃x)Cx}");
         proof.addLine(ProofParser.fromString("Aa", "2 EI"));                //3
@@ -1017,7 +1033,7 @@ public class 	PropositionalTests {
 	}
 
 	@Test
-	public void EGFTest() {
+	public void EGGTest() {
 
         Proof proof = ProofParser.fromString("{(∀x)((Aa | Bx) → Cx) //(∃x)Bx=>(∃x)Cx}");
         proof.addLine(ProofParser.fromString("Ba", "2 EI"));                //3
@@ -1034,7 +1050,7 @@ public class 	PropositionalTests {
 	}
 
 	@Test
-	public void EGGTest() {
+	public void EGHTest() {
 
         Proof proof = ProofParser.fromString("{(∃x)Kx → (∀x)(Lx →  Mx)//Kc & Lc =>Mc}");
         proof.addLine(ProofParser.fromString("Kc", "2 SIMP"));              //3
@@ -1072,7 +1088,7 @@ public class 	PropositionalTests {
 		proof.addLine(ProofParser.fromString("(N | S) & (N | H)", "13 COM"));      //14
 		proof.addLine(ProofParser.fromString("N | S", "14 SIMP"));                 //15
 
-		ProofResult result = proof.build(false);
+		ProofResult result = proof.build(true);
 
 		if (result.getType() != ResultType.CORRECT)
 			fail("El resultado fue " + result.getType() + "!");
@@ -1083,6 +1099,7 @@ public class 	PropositionalTests {
 	public void randomTest2() {
 
 		Proof proof = ProofParser.fromString("{(F & H) → N//F | S//H=>N | S}");
+
 		proof.addLine(ProofParser.fromString("~(F & H) | N", "1 IMPL"));           //4
 		proof.addLine(ProofParser.fromString("(~F | ~H) | N", "4 DM"));            //5
 		proof.addLine(ProofParser.fromString("~F | (~H | N)", "5 ASSOC"));         //6
@@ -1098,11 +1115,11 @@ public class 	PropositionalTests {
 		proof.addLine(ProofParser.fromString("~S → F", "13 IMPL"));                //15
 		proof.addLine(ProofParser.fromString("~S → N", "15,12 HS"));               //16
 		proof.addLine(ProofParser.fromString("~~S | N", "16 IMPL"));               //17
-		// [ERROR, no se puede hacer reglade la IMPL, pienso que es porque esta negada la S]
+		// [ERROR, no se puede hacer regla de la IMPL, pienso que es porque esta negada la S]
 		proof.addLine(ProofParser.fromString("S | N", "17 DN"));                   //18
 		proof.addLine(ProofParser.fromString("N | S", "18 COM"));                  //19
 
-		ProofResult result = proof.build(false);
+		ProofResult result = proof.build(true);
 
 		if (result.getType() != ResultType.CORRECT)
 			fail("El resultado fue " + result.getType() + "!");
@@ -1124,6 +1141,38 @@ public class 	PropositionalTests {
 		proof.addLine(ProofParser.fromString("~(W | R)", "11 DM"));                    //12
 
 		ProofResult result = proof.build(false);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void randomTest4(){
+    	Proof proof = ProofParser.fromString("{A → B//~A → (C | D)//~B//~C=> D}");
+
+    	proof.addLine(ProofParser.fromString("~A", "1,3 MT"));		// 5
+		proof.addLine(ProofParser.fromString("C | D", "2,5 MP"));	// 6
+		proof.addLine(ProofParser.fromString("D","6,4 DS"));		// 7
+
+		ProofResult result = proof.build(false);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void randomTest5(){
+    	// There is a strange problem.
+    	Proof proof = ProofParser.fromString("{F → G//(F | H)//~G//H → (G → H)=>(F → I)}");
+
+    	proof.addLine(ProofParser.fromString("~F", "1,3 MT"));		// 5
+    	proof.addLine(ProofParser.fromString("H", "2,5 DS"));		// 6
+		proof.addLine(ProofParser.fromString("G → H", "4,6 MP"));	// 7
+		proof.addLine(ProofParser.fromString("F → I", "1,7 HS"));	// 8
+
+		ProofResult result = proof.build(true);
 
 		if (result.getType() != ResultType.CORRECT)
 			fail("El resultado fue " + result.getType() + "!");
@@ -1161,9 +1210,8 @@ public class 	PropositionalTests {
 		proof.addLine(ProofParser.fromString("~L", "3 SIMP"));                    //4
 		proof.addLine(ProofParser.fromString("~(~L & M) & (~L & O)", "2 COM"));   //5
 		proof.addLine(ProofParser.fromString("~(~L & M)", "5 SIMP"));             //6
-		proof.addLine(ProofParser.fromString("L | ~M", "6 DM"));                  //7
+		proof.addLine(ProofParser.fromString("(~~L | ~M)", "6 DM"));                //7
 		proof.addLine(ProofParser.fromString("L | ~M", "7 DN"));                  //8
-		// The step 8 have a problem with the double negation because there isn't any negation
 		proof.addLine(ProofParser.fromString("~M", "8,4 DS"));                    //9
 		proof.addLine(ProofParser.fromString("~L & ~M ", "4,9 CONJ"));            //10
 		proof.addLine(ProofParser.fromString("~(L | M)", "10 DM"));               //11
@@ -1177,5 +1225,15 @@ public class 	PropositionalTests {
 			fail("El resultado fue " + result.getType() + "!");
 
 	}
+
+	/**
+	 //@Test
+	 public void parcial1ManuelSierraTuesday(){ // Ya lo termino ahorita
+
+	 Proof proof = ProofParser.fromString("{(S → K) & (U → V)//W → (S | U)=>W → (T | V)}");
+
+
+	 }
+	 */
 
 }

@@ -41,9 +41,8 @@ public class Proof {
 	public ProofResult build(boolean debug) {
 		
 		int index = 0;
-		
-		LinkedList<Formula> tested = new LinkedList<Formula>();
-		tested.addAll(premises);
+
+		LinkedList<Formula> tested = new LinkedList<>(premises);
 		
 		if(proofs.isEmpty())
 			throw new PropositionalLogicException("No hay pasos que seguir para hallar la conclusión.");

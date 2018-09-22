@@ -46,11 +46,7 @@ public abstract class Node {
 	}
 
 	/**
-		* Método getter del uniqueID,
-		* este perimte obtener ID.
-		*
-		* @return uniqueID
-		*
+		* @return uniqueID (ID)
 		*/
 	public UUID getUniqueID() {
 		return uniqueID;
@@ -71,11 +67,7 @@ public abstract class Node {
 	}
 
 	/**
-		* Método getter de la variable master(el axioma),
-		* este método permite obtener al axioma.
-		*
-		* @return master
-		*
+		* @return master (axioma).
 		*/
 	public Node getMaster() {
 		return master;
@@ -104,11 +96,7 @@ public abstract class Node {
 	}
 
 	/**
-	 * Este método perimte obtener la(s)
-	 * constante(s) que son acotadas por
-	 * un axioma.
-	 *
-	 * @return constant
+	 * @return constant (a-z)
 	 */
 	public Constant getConstant() {
 		return isConstant() ? (Constant) this : null;
@@ -116,7 +104,7 @@ public abstract class Node {
 
 	/**
 	 * Este método  retorna false o true
-	 * si la el axioma es una es esta catalogada
+	 * si la el axioma está catalogada
 	 * en la clase Constan.
 	 *
 	 * @return boolean
@@ -127,11 +115,9 @@ public abstract class Node {
 
 	/**
 	 * Este método revisa si el objeto
-	 * posee una varible, por la que
-	 * la retornará (la variable por omisión
-	 * es null).
+	 * posee una varible.
 	 *
-	 * @return constant
+	 * @return constant (constante)
 	 */
 	public Variable getVariable() {
 		return isVariable() ? (Variable) this : null;
@@ -160,8 +146,8 @@ public abstract class Node {
 
 	/**
 	 * Este método revisa si la varible tipo
-     * Nodo es posee un operador en la primera (0)
-     * posición de cadena.
+     * Nodo posee un operador en la primera
+     * posición (0) de cadena.
      *
 	 * @return Action
 	 */
@@ -174,12 +160,9 @@ public abstract class Node {
 		return false;
 	}
 
+
 	/**
-     * Este método retorna el operador
-     * que posee el Nodo, el cual por
-     * omisión es UNKNOW (null).
-     *
-     * @return Action.
+     * @return Action (operador).
      */
 	public Action getAction() {
 		return isAction() ? (Action) this : ActionType.UNKNOW.getAction();
@@ -219,7 +202,7 @@ public abstract class Node {
 	public abstract boolean canConvert();
 
 	/**
-     * Este método recive un objeto tipo Object
+     * Este método recibe un objeto tipo Object
      * y crea un objeto de tipo Nodo con la finlidad
      * de comparar los componetes entre Nodos, como su
      * ID - variables - constantes - operadores - Fomula.
@@ -256,11 +239,11 @@ public abstract class Node {
 	}
 
 	/**
-     * En este método estan en listas todos los tipos
-     * de operadores logicos con el fin de construir un
+     * En este método estan enlistados todos los tipos
+     * de operadores logicas con el fin de construir un
      * Nodo y caracterizarlo con un enumerador. Por lo
      * que puede retornar los objetos de un Nodo como
-     * la Formula, su identificador o su operador logico.
+     * la Formula, su identificador o su operador lógico.
      */
 	public static enum ActionType {
 		
@@ -384,47 +367,36 @@ public abstract class Node {
 		Z;
 
         /**
-         * Este método retorna una viarible sea X, Y o Z.
-         * @return Varible
+         * @return Varible (X-Y-Z).
          */
 		public boolean isVar() {
 			return this == X || this == Y || this == Z;
 		}
 
         /**
-         * Este método retorna una constante a - w.
-         * @return constant
+         * @return constant (a-w).
          */
 		public boolean isConst() {
 			return this != X && this != Y && this != Z;
 		}
 
         /**
-         * Este método retorna el caracter que posee
-         * la variable.
-         *
-         * @return constant
+         * @return constant (varible).
          */
 		public char getIdentifier() {
 			return this.name().toLowerCase().charAt(0);
 		}
 
         /**
-         * Este método retorna una constante con
-         * el valor de un identificador.
-         *
-         * @return Constant.
+         * @return Constant (a-z)
          */
 		public Constant getConstant() {
 			return new Constant(getIdentifier());
 		}
 
         /**
-         * Este método retorna una varible la cual
-         * posee la constante del parametro.
-         *
          * @param constant
-         * @return type
+         * @return type (varible del parámetro).
          *
          */
 		public static ConstantType valueOf(char constant) {

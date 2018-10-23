@@ -121,7 +121,7 @@ public class PropositionalTests {
 		
 		Proof proof = ProofParser.fromString("{A | ~~B//~A=>~~B}"); //1,2
 
-    	proof.addLine(ProofParser.fromString("~~B", "1,2 DS"));     //3
+    	proof.addLine(ProofParser.fromString("~~B", "1,2 DS"));   //3
     	
     	ProofResult result = proof.build(false);
 		

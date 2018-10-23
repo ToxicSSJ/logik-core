@@ -1358,7 +1358,26 @@ public class PropositionalTests {
         proof.addLine(ProofParser.fromString("S", "4,8 MP")); // 9
         proof.addLine(ProofParser.fromString("S | T", "9 ADD")); // 10
 
+        ProofResult result = proof.build(false);
+
+        if (result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType() + "!");
     }
+
+    @Test
+	public void randomTest12() {
+
+		Proof proof = ProofParser.fromString("{(A → B)//(C → D)//(A | C)=>(B | D)}");
+
+        proof.addLine(ProofParser.fromString("(A → B) 6 (C → D)", "1,2 CONJ"));
+        proof.addLine(ProofParser.fromString("(B | D)", "3,4 CD"));
+
+        ProofResult result = proof.build(false);
+
+        if (result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType() + "!");
+
+	}
 
 	@Test
 	public void parcial1ManuelSierraTuesday2(){

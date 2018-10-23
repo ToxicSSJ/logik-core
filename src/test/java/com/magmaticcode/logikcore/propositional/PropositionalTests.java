@@ -26,7 +26,7 @@ public class PropositionalTests {
 	}
 	
 	@Test
-	public void simplificationTest() {
+	public void simplificationATest() {
 		
 		Proof proof = ProofParser.fromString("{(~A & C) & (D & ~H)=>~A}"); //1
 
@@ -39,7 +39,21 @@ public class PropositionalTests {
     		fail("El resultado fue " + result.getType() + "!");
 		
 	}
-	
+
+    @Test
+    public void simplificationBTest() {
+
+        Proof proof = ProofParser.fromString("{(A → B)//(C & B)//(C → A)=>C}"); // 1, 2, 3
+
+        proof.addLine(ProofParser.fromString("C", "2 SIMP")); // 4
+
+        ProofResult result = proof.build(false);
+
+        if(result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType() + "!");
+
+    }
+
 	@Test
 	public void additionTest() {
 		
@@ -103,7 +117,7 @@ public class PropositionalTests {
 	}
 	
 	@Test
-	public void disjunctiveSyllogismTest() {
+	public void disjunctiveSyllogismATest() {
 		
 		Proof proof = ProofParser.fromString("{A | ~~B//~A=>~~B}"); //1,2
 
@@ -115,9 +129,24 @@ public class PropositionalTests {
     		fail("El resultado fue " + result.getType() + "!");
 		
 	}
-	
+
+    @Test
+    public void disjunctiveSyllogismBTest() {
+
+        Proof proof = ProofParser.fromString("{S//~S=>T}"); // 1,2
+
+        proof.addLine(ProofParser.fromString("S | T", "1 ADD")); // 3
+        proof.addLine(ProofParser.fromString("T", "3,2 DS"));
+
+        ProofResult result = proof.build(false);
+
+        if(result.getType() != ResultType.CORRECT)
+            fail("El resultado fue " + result.getType() + "!");
+
+    }
+
 	@Test
-	public void disjunctiveSyllogismBTest() {
+	public void disjunctiveSyllogismCTest() {
 		
 		Proof proof = ProofParser.fromString("{(A | ~~B) | ~(K & ~D)//~(A | ~~B)=>~(K & ~D)}"); //1,2
 
@@ -1133,19 +1162,19 @@ public class PropositionalTests {
 
 		Proof proof = ProofParser.fromString("{(F & H) → N//F | S//H=>N | S}");    //1,2,3
 
-		proof.addLine(ProofParser.fromString("(F | S) & H", "2,3 CONJ"));          //4
-		proof.addLine(ProofParser.fromString("H & (F | S)", "4 COM"));             //5
-		proof.addLine(ProofParser.fromString("(H & F) | (H & S)", "5 DIST"));      //6
-		proof.addLine(ProofParser.fromString("(H & S) | (H & F)", "6 COM"));       //7
-		proof.addLine(ProofParser.fromString("(H & S) | (F & H)", "7 COM"));       //8
-		proof.addLine(ProofParser.fromString("~(H & S) → (F & H)", "8 IMPL"));     //9
-		proof.addLine(ProofParser.fromString("~(H & S) → N", "9,1 HS"));           //10
-		proof.addLine(ProofParser.fromString("(H & S) | N", "10 IMPL"));           //11
-		proof.addLine(ProofParser.fromString("N | (H & S)", "11 COM"));            //12
-		proof.addLine(ProofParser.fromString("(N | H) & (N | S)", "12 DIST"));     //13
+		proof.addLine(ProofParser.fromString("(F | S) & H", "2,3 CONJ"));//4
+		proof.addLine(ProofParser.fromString("H & (F | S)", "4 COM"));//5
+		proof.addLine(ProofParser.fromString("(H & F) | (H & S)", "5 DIST"));//6
+		proof.addLine(ProofParser.fromString("(H & S) | (H & F)", "6 COM"));//7
+		proof.addLine(ProofParser.fromString("(H & S) | (F & H)", "7 COM"));//8
+		proof.addLine(ProofParser.fromString("~(H & S) → (F & H)", "8 IMPL"));//9
+		proof.addLine(ProofParser.fromString("~(H & S) → N", "9,1 HS"));//10
+		proof.addLine(ProofParser.fromString("(H & S) | N", "10 IMPL"));//11
+		proof.addLine(ProofParser.fromString("N | (H & S)", "11 COM"));//12
+		proof.addLine(ProofParser.fromString("(N | H) & (N | S)", "12 DIST"));//13
 		// [ERROR, la regla al parecer no tiene la opción de A | (B & C) ↔ (A | B) & (A | C) ]
-		proof.addLine(ProofParser.fromString("(N | S) & (N | H)", "13 COM"));      //14
-		proof.addLine(ProofParser.fromString("N | S", "14 SIMP"));                 //15
+		proof.addLine(ProofParser.fromString("(N | S) & (N | H)", "13 COM"));//14
+		proof.addLine(ProofParser.fromString("N | S", "14 SIMP"));//15
 
 		ProofResult result = proof.build(true);
 
@@ -1159,24 +1188,24 @@ public class PropositionalTests {
 
 		Proof proof = ProofParser.fromString("{(F & H) → N//F | S//H=>N | S}");    //1,2,3
 
-		proof.addLine(ProofParser.fromString("~(F & H) | N", "1 IMPL"));           //4
-		proof.addLine(ProofParser.fromString("(~F | ~H) | N", "4 DM"));            //5
-		proof.addLine(ProofParser.fromString("~F | (~H | N)", "5 ASSOC"));         //6
-		proof.addLine(ProofParser.fromString("(~H | N) | ~F", "6 COM"));           //7
-		proof.addLine(ProofParser.fromString("~H | (N | ~F)", "7 ASSOC"));         //8
-		proof.addLine(ProofParser.fromString("H → (N | ~F)", "8 IMPL"));           //9
-		proof.addLine(ProofParser.fromString("N | ~F", "9,3 MP"));                 //10
-		proof.addLine(ProofParser.fromString("~F | N", "10 COM"));                 //11
-		proof.addLine(ProofParser.fromString("F → N", "11 IMPL"));                 //12
-		proof.addLine(ProofParser.fromString("S | F", "2 COM"));                   //13
-		proof.addLine(ProofParser.fromString("~~S | F", "13 DN"));                 //14
+		proof.addLine(ProofParser.fromString("~(F & H) | N", "1 IMPL"));//4
+		proof.addLine(ProofParser.fromString("(~F | ~H) | N", "4 DM"));//5
+		proof.addLine(ProofParser.fromString("~F | (~H | N)", "5 ASSOC"));//6
+		proof.addLine(ProofParser.fromString("(~H | N) | ~F", "6 COM"));//7
+		proof.addLine(ProofParser.fromString("~H | (N | ~F)", "7 ASSOC"));//8
+		proof.addLine(ProofParser.fromString("H → (N | ~F)", "8 IMPL"));//9
+		proof.addLine(ProofParser.fromString("N | ~F", "9,3 MP"));//10
+		proof.addLine(ProofParser.fromString("~F | N", "10 COM"));//11
+		proof.addLine(ProofParser.fromString("F → N", "11 IMPL"));//12
+		proof.addLine(ProofParser.fromString("S | F", "2 COM"));//13
+		proof.addLine(ProofParser.fromString("~~S | F", "13 DN"));//14
 		// [ERROR, no se pude hacer la regla de IMPL, pienso que es porque esta negada la S]
-		proof.addLine(ProofParser.fromString("~S → F", "13 IMPL"));                //15
-		proof.addLine(ProofParser.fromString("~S → N", "15,12 HS"));               //16
-		proof.addLine(ProofParser.fromString("~~S | N", "16 IMPL"));               //17
+		proof.addLine(ProofParser.fromString("~S → F", "13 IMPL"));//15
+		proof.addLine(ProofParser.fromString("~S → N", "15,12 HS"));//16
+		proof.addLine(ProofParser.fromString("~~S | N", "16 IMPL"));//17
 		// [ERROR, no se puede hacer regla de la IMPL, pienso que es porque esta negada la S]
-		proof.addLine(ProofParser.fromString("S | N", "17 DN"));                   //18
-		proof.addLine(ProofParser.fromString("N | S", "18 COM"));                  //19
+		proof.addLine(ProofParser.fromString("S | N", "17 DN"));//18
+		proof.addLine(ProofParser.fromString("N | S", "18 COM"));//19
 
 		ProofResult result = proof.build(true);
 
@@ -1190,15 +1219,15 @@ public class PropositionalTests {
 
 		Proof proof = ProofParser.fromString("{A ↔ W//~A | ~W//R → A=>~(W | R)}");      //1,2,3
 
-		proof.addLine(ProofParser.fromString("(A & W) | (~A & ~W)", "1 EQUIV"));        //4
-		proof.addLine(ProofParser.fromString("~(A & W)", "2 DM"));                      //5
-		proof.addLine(ProofParser.fromString("~A & ~W", "4,5 DS"));                     //6
-		proof.addLine(ProofParser.fromString("~W & ~A", "6 COM"));                      //7
-		proof.addLine(ProofParser.fromString("~W", "7 SIMP"));                          //8
-		proof.addLine(ProofParser.fromString("~A", "6 SIMP"));                          //9
-		proof.addLine(ProofParser.fromString("~R", "3,9 MT"));                          //10
-		proof.addLine(ProofParser.fromString("~W & ~R", "8,10 CONJ"));                  //11
-		proof.addLine(ProofParser.fromString("~(W | R)", "11 DM"));                     //12
+		proof.addLine(ProofParser.fromString("(A & W) | (~A & ~W)", "1 EQUIV"));//4
+		proof.addLine(ProofParser.fromString("~(A & W)", "2 DM"));//5
+		proof.addLine(ProofParser.fromString("~A & ~W", "4,5 DS"));//6
+		proof.addLine(ProofParser.fromString("~W & ~A", "6 COM"));//7
+		proof.addLine(ProofParser.fromString("~W", "7 SIMP"));//8
+		proof.addLine(ProofParser.fromString("~A", "6 SIMP"));//9
+		proof.addLine(ProofParser.fromString("~R", "3,9 MT"));//10
+		proof.addLine(ProofParser.fromString("~W & ~R", "8,10 CONJ"));//11
+		proof.addLine(ProofParser.fromString("~(W | R)", "11 DM"));//12
 
 		ProofResult result = proof.build(false);
 
@@ -1211,9 +1240,9 @@ public class PropositionalTests {
 	public void randomTest4(){
     	Proof proof = ProofParser.fromString("{A → B//~A → (C | D)//~B//~C=> D}"); //1,2,3,4
 
-    	proof.addLine(ProofParser.fromString("~A", "1,3 MT"));		               //5
-		proof.addLine(ProofParser.fromString("C | D", "2,5 MP"));	               //6
-		proof.addLine(ProofParser.fromString("D","6,4 DS"));		               //7
+    	proof.addLine(ProofParser.fromString("~A", "1,3 MT"));//5
+		proof.addLine(ProofParser.fromString("C | D", "2,5 MP"));//6
+		proof.addLine(ProofParser.fromString("D","6,4 DS"));//7
 
 		ProofResult result = proof.build(false);
 
@@ -1316,6 +1345,21 @@ public class PropositionalTests {
 			fail("El resultado fue " + result.getType() + "!");
 
 	}
+
+	@Test
+    public void randomTest11() {
+
+        Proof proof = ProofParser.fromString("{~M & N//P→M//Q & R//(~P & Q)→S=>S | T}");
+
+        proof.addLine(ProofParser.fromString("~M", "1 SIMP")); // 5
+        proof.addLine(ProofParser.fromString("~P", "2,5 MT")); // 6
+        proof.addLine(ProofParser.fromString("Q", "3 SIMP")); // 7
+        proof.addLine(ProofParser.fromString("(~P & Q)", "6,7 CONJ")); // 8
+        proof.addLine(ProofParser.fromString("S", "4,8 MP")); // 9
+        proof.addLine(ProofParser.fromString("S | T", "9 ADD")); // 10
+
+    }
+
 	@Test
 	public void parcial1ManuelSierraTuesday2(){
 

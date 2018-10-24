@@ -87,19 +87,36 @@ public class PropositionalTests {
     		fail("El resultado fue " + result.getType() + "!");
 		
 	}
-	
+
 	@Test
-	public void modusPonensTest() {
-		
+	public void modusPonensATest() {
+
 		Proof proof = ProofParser.fromString("{A → B//A=>B}"); //1,2
 
-    	proof.addLine(ProofParser.fromString("B", "1,2 MP"));  //3
-    	
-    	ProofResult result = proof.build(false);
-		
-    	if(result.getType() != ResultType.CORRECT)
-    		fail("El resultado fue " + result.getType() + "!");
-		
+		proof.addLine(ProofParser.fromString("B", "1,2 MP"));  //3
+
+		ProofResult result = proof.build(false);
+
+		if(result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void modusPonensBTest() {
+
+		Proof proof = ProofParser.fromString("{A → (B → C)//B → (C → D)//A//B=>D}"); // 1, 2, 3, 4.
+
+		proof.addLine(ProofParser.fromString("(B → C)", "1,3 MP"));  // 5
+		proof.addLine(ProofParser.fromString("C", "5,4 MP"));		  // 6
+		proof.addLine(ProofParser.fromString("(C → D)", "2,4 MP")); // 7
+		proof.addLine(ProofParser.fromString("D", "7,6 MP"));
+
+		ProofResult result = proof.build(false);
+
+		if(result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
 	}
 	
 	@Test
@@ -560,8 +577,8 @@ public class PropositionalTests {
 		
 		Proof proof = ProofParser.fromString("{~~(Nx → ~(C → ~~(Ah → Bh)))=>~~(Nx → ~(C → ~~(Bh | ~Ah)))}");  //1
 
-    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(~Ah | Bh)))", "1 IMPL"));                      //2
-    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(Bh | ~Ah)))", "2 COM"));                       //3
+    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(~Ah | Bh)))", "1 IMPL"));     //2
+    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(Bh | ~Ah)))", "2 COM"));      //3
     	
     	ProofResult result = proof.build(false);
 		
@@ -575,9 +592,9 @@ public class PropositionalTests {
 		
 		Proof proof = ProofParser.fromString("{~~(Nx → ~(C → ~~(Ah → Bh)))=>~~(Nx → ~(~C | ~~(Bh | ~Ah)))}"); //1
 
-    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(~Ah | Bh)))", "1 IMPL"));                      //2
-    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(Bh | ~Ah)))", "2 COM"));                       //3
-    	proof.addLine(ProofParser.fromString("~~(Nx → ~(~C | ~~(Bh | ~Ah)))", "3 IMPL"));                     //4
+    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(~Ah | Bh)))", "1 IMPL"));	//2
+    	proof.addLine(ProofParser.fromString("~~(Nx → ~(C → ~~(Bh | ~Ah)))", "2 COM"));	//3
+    	proof.addLine(ProofParser.fromString("~~(Nx → ~(~C | ~~(Bh | ~Ah)))", "3 IMPL"));	//4
     	
     	ProofResult result = proof.build(false);
 		
@@ -591,7 +608,7 @@ public class PropositionalTests {
 		
 		Proof proof = ProofParser.fromString("{(A → B) & (B → A)=>A \u2194 B}"); //1
 
-    	proof.addLine(ProofParser.fromString("A \u2194 B", "1 EQUIV"));          //2
+    	proof.addLine(ProofParser.fromString("A \u2194 B", "1 EQUIV"));	//2
     	
     	ProofResult result = proof.build(false);
 		
@@ -795,7 +812,24 @@ public class PropositionalTests {
     		fail("El resultado fue " + result.getType() + "!");
 		
 	}
-	
+
+	@Test
+	public void UIFTest() {
+
+		Proof proof = ProofParser.fromString("{Lhd//(∀x)(Lxd → Lxt)//(∀x)(Lhx → Gx)=>Gt}"); // 1, 2, 3.
+
+		proof.addLine(ProofParser.fromString("(Lhd → Lht)", "2 UI"));	// 4
+		proof.addLine(ProofParser.fromString("Lht", "4,1 MP"));		// 5
+		proof.addLine(ProofParser.fromString("(Lht → Gt)", "3 UI"));	// 6
+		proof.addLine(ProofParser.fromString("Gt", "6,5 MP"));			// 7
+
+		ProofResult result = proof.build(false);
+
+		if(result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
 	@Test
 	public void EIATest() {
 		
@@ -877,9 +911,10 @@ public class PropositionalTests {
     @Test
     public void UGATest() {
 
-        Proof proof = ProofParser.fromString("{Wx & Bx=>(∀x)(Wx & Bx)}"); //1
+        Proof proof = ProofParser.fromString("{Wx & Bx=>(∀x)(Wx)}"); //1
 
-        proof.addLine(ProofParser.fromString("(∀x)(Wx & Bx)", "1 UG"));   //2
+		proof.addLine(ProofParser.fromString("Wx", "1 SIMP")); 	// 2
+		proof.addLine(ProofParser.fromString("(∀x)(Wx)", "2 UG"));   // 3
 
         ProofResult result = proof.build(false);
 
@@ -984,6 +1019,27 @@ public class PropositionalTests {
 
 		if (result.getType() != ResultType.CORRECT)
 			fail("El resultado fue " + result.getType() + "!");
+	}
+
+	@Test
+	public void UGHTest() {
+
+		Proof proof = ProofParser.fromString("{(∀x)(Dx → Cx)//(∃x)(Ax & Dx)=>(∃x)(Ax & Cx)}"); // 1, 2.
+
+		proof.addLine(ProofParser.fromString("(Ay & Dy)", "2 EI"));		// 3
+		proof.addLine(ProofParser.fromString("(Dy → Cy)", "1 UI"));  		// 4
+		proof.addLine(ProofParser.fromString("(Dy & Ay)", "3 COM"));		// 5
+		proof.addLine(ProofParser.fromString("Dy", "5 SIMP"));				// 6
+		proof.addLine(ProofParser.fromString("Cy", "4,6 MP"));				// 7
+		proof.addLine(ProofParser.fromString("Ay", "3 SIMP"));				// 8
+		proof.addLine(ProofParser.fromString("(Ay & Cy)", "8,7 CONJ")); 	// 9
+		proof.addLine(ProofParser.fromString("(∃x)(Ax & Cx)", "9 EG"));
+
+		ProofResult result = proof.build(false);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
 	}
 
     @Test
@@ -1367,15 +1423,66 @@ public class PropositionalTests {
     @Test
 	public void randomTest12() {
 
-		Proof proof = ProofParser.fromString("{(A → B)//(C → D)//(A | C)=>(B | D)}");
+		Proof proof = ProofParser.fromString("{(A → B)//(C → D)//(A | C)=>(B | D)}");	// 1, 2, 3.
 
-        proof.addLine(ProofParser.fromString("(A → B) 6 (C → D)", "1,2 CONJ"));
-        proof.addLine(ProofParser.fromString("(B | D)", "3,4 CD"));
+        proof.addLine(ProofParser.fromString("(A → B) 6 (C → D)", "1,2 CONJ"));	// 4
+        proof.addLine(ProofParser.fromString("(B | D)", "3,4 CD"));	// 5
 
         ProofResult result = proof.build(false);
 
         if (result.getType() != ResultType.CORRECT)
             fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void randomTest13() {
+
+		Proof proof = ProofParser.fromString("{(A | B) → (C & D)//(D | E) → F//A=>F}"); // 1, 2, 3.
+
+		proof.addLine(ProofParser.fromString("(A | B)", "3 ADD"));  // 4
+		proof.addLine(ProofParser.fromString("(C & D)", "1,4 MP")); // 5
+		proof.addLine(ProofParser.fromString("(D & C)", "5 COM"));  // 6
+		proof.addLine(ProofParser.fromString("D", "6 SIMP"));		 // 7
+		proof.addLine(ProofParser.fromString("(D | E)", "7 ADD"));  // 8
+		proof.addLine(ProofParser.fromString("F", "2,8 MP"));		 // 9
+
+		ProofResult result = proof.build(false);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void randomTest14() {
+
+		Proof proof = ProofParser.fromString("{(A → B)//A=>(A & B)}");	// 1, 2.
+
+		proof.addLine(ProofParser.fromString("B", "1,2 MP"));			// 3
+		proof.addLine(ProofParser.fromString("(A & B)", "2,3 CONJ"));	// 4
+
+		ProofResult result = proof.build(false);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
+
+	}
+
+	@Test
+	public void randomTest15() {
+
+		Proof proof = ProofParser.fromString("{(∀x)(Mx → ~Px)//(∀x)(Hx → Mx)=>(∀x)(Hx → ~Px)}"); // 1, 2.
+
+		proof.addLine(ProofParser.fromString("(Hy → My)", "2 UI"));		// 3
+		proof.addLine(ProofParser.fromString("(My → ~Py)", "1 UI"));  		// 4
+		proof.addLine(ProofParser.fromString("(Hy → ~Py)", "3,4 HS"));		// 5
+		proof.addLine(ProofParser.fromString("(∀x)(Hx → ~Px)", "5 UG"));  // 6
+
+		ProofResult result = proof.build(false);
+
+		if (result.getType() != ResultType.CORRECT)
+			fail("El resultado fue " + result.getType() + "!");
 
 	}
 

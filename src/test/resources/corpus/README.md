@@ -1,6 +1,6 @@
 # Test corpus
 
-This folder is the specification of logik-core. It says which proofs a proof checker must accept, which it must reject and at which line, and how the formula parser must read or reject each input. It is plain data, so the 2018 engine, the rewrite and the Rust port produced by Transmuto can all run the same cases.
+This folder is the specification of logik-core. It says which proofs a proof checker must accept, which it must reject and at which line, and how the formula parser must read or reject each input. It is plain data, so the Java checker and the Rust port produced by Transmuto can run the same cases. `CheckerCorpusTest` runs every proof in both modes, and `SyntaxCorpusTest` runs every parser case.
 
 | Path | Content |
 |---|---|
@@ -32,7 +32,7 @@ flexible: valid
 | `N. formula ; justification` | One proof line. `N` is its line number: premises are lines 1 to k, so the first step is k + 1. The justification is the cited lines, comma-separated, and the rule name, as in `2,3 CONJ`. A case may have no steps. |
 | `expect` | Verdict in both modes. |
 | `strict`, `flexible` | Verdict in one mode. A case has either `expect` or both of these. |
-| `legacy` | Why the 2018 engine disagrees with the flexible verdict. Only present when it does. |
+| `legacy` | Why the 2018 engine, kept under the `legacy-2018` tag, got the flexible verdict wrong. History only: no test runs that engine any more. |
 
 A verdict is one of:
 

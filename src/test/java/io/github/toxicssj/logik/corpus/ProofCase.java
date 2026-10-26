@@ -2,6 +2,8 @@ package io.github.toxicssj.logik.corpus;
 
 import java.util.List;
 
+import io.github.toxicssj.logik.proof.Mode;
+
 /**
  * A proof from the corpus.
  *

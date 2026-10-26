@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import io.github.toxicssj.logik.proof.Mode;
+
 import org.junit.jupiter.api.Test;
 
 /** Checks the corpus reader, so that a typo in the corpus fails loudly. */

@@ -1,8 +1,5 @@
 package io.github.toxicssj.logik.corpus;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /** What a proof checker must say about a proof. */
 public sealed interface Verdict {
 
@@ -34,19 +31,29 @@ public sealed interface Verdict {
         return this instanceof Valid;
     }
 
-    Pattern INVALID = Pattern.compile("invalid at (\\d+|end): (.+)");
-
-    /** Reads a verdict written as in the corpus, or returns null if the text is not one. */
+    /** Reads {@code valid}, {@code invalid at N: reason} or {@code invalid at end: reason}; null if the text is none of them. */
     static Verdict parse(String text) {
         if (text.equals("valid")) {
             return new Valid();
         }
-        Matcher m = INVALID.matcher(text);
-        if (!m.matches()) {
+        String prefix = "invalid at ";
+        int colon = text.indexOf(": ");
+        if (!text.startsWith(prefix) || colon < 0 || colon + 2 >= text.length()) {
             return null;
         }
-        return m.group(1).equals("end")
-                ? new InvalidAtEnd(m.group(2))
-                : new InvalidAtLine(Integer.parseInt(m.group(1)), m.group(2));
+        String where = text.substring(prefix.length(), colon);
+        String reason = text.substring(colon + 2);
+        if (where.equals("end")) {
+            return new InvalidAtEnd(reason);
+        }
+        if (where.isEmpty() || where.length() > 9) {
+            return null;
+        }
+        for (int i = 0; i < where.length(); i++) {
+            if (where.charAt(i) < '0' || where.charAt(i) > '9') {
+                return null;
+            }
+        }
+        return new InvalidAtLine(Integer.parseInt(where), reason);
     }
 }

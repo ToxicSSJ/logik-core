@@ -1,5 +1,6 @@
 package io.github.toxicssj.logik.corpus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.toxicssj.logik.proof.Mode;
@@ -7,12 +8,12 @@ import io.github.toxicssj.logik.proof.Mode;
 /**
  * A proof from the corpus.
  *
- * @param problem    premises and conclusion as {@code {P//Q=>C}}
- * @param steps      the lines after the premises
+ * @param problem         premises and conclusion as {@code {P//Q=>C}}
+ * @param steps           the lines after the premises
  * @param argumentInvalid true if the argument itself is not valid: some model
- *                   makes every premise true and the conclusion false
- * @param legacyNote why the 2018 engine disagrees with the flexible verdict, or null
- * @param location   file and line where the case starts, for error messages
+ *                        makes every premise true and the conclusion false
+ * @param legacyNote      why the 2018 engine got the flexible verdict wrong, or null
+ * @param location        file and line where the case starts, for error messages
  */
 public record ProofCase(
         String id,
@@ -41,18 +42,28 @@ public record ProofCase(
     }
 
     public String conclusion() {
-        return body(problem).split("=>", -1)[1].strip();
+        String body = body(problem);
+        return body.substring(body.indexOf("=>") + 2).strip();
     }
 
     /** The premises of {@code {P//Q=>C}}; {@code {=>C}} has none. */
     static List<String> premisesOf(String problem) {
-        String premises = body(problem).split("=>", -1)[0];
+        String body = body(problem);
+        String premises = body.substring(0, body.indexOf("=>"));
+        List<String> parts = new ArrayList<>();
         if (premises.isBlank()) {
-            return List.of();
+            return parts;
         }
-        return List.of(premises.split("//", -1)).stream()
-                .map(String::strip)
-                .toList();
+        int start = 0;
+        while (true) {
+            int separator = premises.indexOf("//", start);
+            if (separator < 0) {
+                parts.add(premises.substring(start).strip());
+                return parts;
+            }
+            parts.add(premises.substring(start, separator).strip());
+            start = separator + 2;
+        }
     }
 
     private static String body(String problem) {

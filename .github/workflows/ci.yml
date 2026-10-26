@@ -31,6 +31,13 @@ jobs:
           cache: maven
       - name: Build and test
         run: ./mvnw -B -ntp verify
+      - name: Run the corpus
+        run: java -jar target/logik-core-*.jar src/test/resources/corpus > corpus-output.txt
+      - name: Upload the corpus output
+        uses: actions/upload-artifact@v7
+        with:
+          name: corpus-output-java-${{ matrix.java }}
+          path: corpus-output.txt
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v7

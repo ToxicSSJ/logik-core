@@ -1,24 +1,24 @@
 # logik-core [![CI](https://github.com/ToxicSSJ/logik-core/actions/workflows/ci.yml/badge.svg)](https://github.com/ToxicSSJ/logik-core/actions/workflows/ci.yml)
 
-Librería de lógica proposicional y de predicados: analizador de fórmulas y verificador de demostraciones por deducción natural (reglas de Copi, al estilo de LogicCoach).
+A propositional and predicate logic library: a formula parser and a natural-deduction proof checker that uses the rules from Copi's *Introduction to Logic*, in the style of LogicCoach.
 
-## Estado
+## Status
 
-El código actual es el original de 2018, hecho en primer semestre de Ingeniería de Sistemas. Está conservado en la etiqueta [`legacy-2018`](https://github.com/ToxicSSJ/logik-core/tree/legacy-2018) y se va a reescribir.
+The current code is the original from 2018, written during a first semester of Systems Engineering. It is kept under the [`legacy-2018`](https://github.com/ToxicSSJ/logik-core/tree/legacy-2018) tag and is being rewritten.
 
-- De los 96 tests de demostraciones, 77 pasan.
-- Los otros 19 están marcados con `@Disabled`, y cada uno explica su motivo: un bug conocido del motor o un error en el propio test. Se reactivarán en la reescritura.
+- 77 of the 96 proof tests pass.
+- The other 19 are marked `@Disabled`, each with its reason: a known engine bug or a mistake in the test itself. The rewrite will turn them back on.
 
-## Compilar y probar
+## Build and test
 
-Requiere Java 17 o superior. El Maven Wrapper descarga la versión fijada de Maven:
+Requires Java 21 or later. The Maven Wrapper downloads the pinned Maven version:
 
 ```sh
 ./mvnw verify
 ```
 
-La CI de GitHub Actions corre los tests en cada push y pull request, con Java 17, 21 y 25.
+GitHub Actions runs the tests on every push and pull request, on Java 21 and 25.
 
-## Licencia
+## License
 
 [MIT](LICENSE).

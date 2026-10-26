@@ -1,6 +1,6 @@
 # Test corpus
 
-This folder is the specification of logik-core. It says which proofs a proof checker must accept, which it must reject and at which line, and how the formula parser must read or reject each input. It is plain data, so the Java checker and the Rust port produced by Transmuto can run the same cases. `CheckerCorpusTest` runs every proof in both modes, and `SyntaxCorpusTest` runs every parser case.
+This folder is the specification of logik-core. It says which proofs a proof checker must accept, which it must reject and at which line, and how the formula parser must read or reject each input. It is plain data, so the Java checker and the Rust port produced by Transmuto can run the same cases. `CheckerCorpusTest` runs every proof in both modes, `SyntaxCorpusTest` runs every parser case, and `SemanticCorpusTest` checks that every case marked valid has a valid argument and that `argument: invalid` is there exactly when the argument has a countermodel. Free variables count as names of arbitrary individuals.
 
 | Path | Content |
 |---|---|
@@ -34,6 +34,7 @@ flexible: valid
 | `N. formula ; justification` | One proof line. `N` is its line number: premises are lines 1 to k, so the first step is k + 1. The justification is what the line cites, comma-separated, and the rule name, as in `2,3 CONJ`, `2-4 CP` or `ACP`. A case may have no steps, and a problem may have no premises, as in `{=>P | ~P}`, so that the first step is line 1. Spaces after `N.` are ignored, so the lines of a subproof can be indented. |
 | `expect` | Verdict in both modes. |
 | `strict`, `flexible` | Verdict in one mode. A case has either `expect` or both of these. |
+| `argument` | `invalid` when the argument itself is not valid: some model makes every premise true and the conclusion false. Only on cases whose proof is invalid in both modes. |
 | `legacy` | Why the 2018 engine, kept under the `legacy-2018` tag, got the flexible verdict wrong. History only: no test runs that engine any more. |
 
 A verdict is one of:

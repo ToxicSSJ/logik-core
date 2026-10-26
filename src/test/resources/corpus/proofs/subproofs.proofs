@@ -138,6 +138,7 @@ problem: {P → Q=>Q}
 4. P → Q ; 2-3 CP
 5. Q ; 1,2 MP
 expect: invalid at 5: line 2 is inside the subproof on lines 2-3, which is closed
+argument: invalid
 
 case: assumption-never-discharged
 source: soundness, CP added in 2026
@@ -145,6 +146,7 @@ problem: {P → Q=>Q}
 2.   P ; ACP
 3.   Q ; 1,2 MP
 expect: invalid at end: the assumption on line 2 is never discharged
+argument: invalid
 
 case: cp-from-a-line-that-is-not-an-assumption
 source: soundness, CP added in 2026
@@ -220,6 +222,7 @@ problem: {P | Q=>P}
 3.   Q ; 1,2 DS
 4. P ; 2-3 IP
 expect: invalid at 4: IP needs the subproof to end in a contradiction, p & ~p, and line 3 is not one
+argument: invalid
 
 case: ug-free-in-open-assumption
 source: soundness, CP added in 2026
@@ -230,3 +233,4 @@ problem: {(∀x)(Fx → Gx)=>Fy → (∀x)Gx}
 5.   (∀x)Gx ; 4 UG
 6. Fy → (∀x)Gx ; 2-5 CP
 expect: invalid at 5: UG cannot generalize y, which is free in the assumption on line 2
+argument: invalid

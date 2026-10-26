@@ -12,6 +12,8 @@ public enum Rule {
     DS("Disjunctive Syllogism", Kind.INFERENCE, 2),
     HS("Hypothetical Syllogism", Kind.INFERENCE, 2),
     CD("Constructive Dilemma", Kind.INFERENCE, 2),
+    DD("Destructive Dilemma", Kind.INFERENCE, 2),
+    ABS("Absorption", Kind.INFERENCE, 1),
 
     // Rules of replacement: they rewrite one subformula.
     DN("Double Negation", Kind.REPLACEMENT, 1),
@@ -24,15 +26,22 @@ public enum Rule {
     EQUIV("Material Equivalence", Kind.REPLACEMENT, 1),
     EXP("Exportation", Kind.REPLACEMENT, 1),
     TAUT("Tautology", Kind.REPLACEMENT, 1),
+    QN("Quantifier Negation", Kind.REPLACEMENT, 1),
 
     // Quantification rules.
     UI("Universal Instantiation", Kind.QUANTIFIER, 1),
     EI("Existential Instantiation", Kind.QUANTIFIER, 1),
     UG("Universal Generalization", Kind.QUANTIFIER, 1),
-    EG("Existential Generalization", Kind.QUANTIFIER, 1);
+    EG("Existential Generalization", Kind.QUANTIFIER, 1),
+
+    // Assumptions open a subproof; CP and IP close it, citing it as a range.
+    ACP("Assumption for Conditional Proof", Kind.ASSUMPTION, 0),
+    AIP("Assumption for Indirect Proof", Kind.ASSUMPTION, 0),
+    CP("Conditional Proof", Kind.DISCHARGE, 1),
+    IP("Indirect Proof", Kind.DISCHARGE, 1);
 
     /** What a rule does. */
-    public enum Kind { INFERENCE, REPLACEMENT, QUANTIFIER }
+    public enum Kind { INFERENCE, REPLACEMENT, QUANTIFIER, ASSUMPTION, DISCHARGE }
 
     private final String fullName;
     private final Kind kind;
@@ -52,7 +61,7 @@ public enum Rule {
         return kind;
     }
 
-    /** How many lines a step with this rule cites. */
+    /** How many citations a step with this rule has: lines, or for CP and IP one range. */
     public int citations() {
         return citations;
     }

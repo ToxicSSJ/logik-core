@@ -7,6 +7,8 @@ This folder is the specification of logik-core. It says which proofs a proof che
 | `proofs/2018-*.proofs` | The proofs from the original 2018 test suite, some of them corrected (see below). |
 | `proofs/soundness.proofs` | Wrong proofs that a checker must reject. |
 | `proofs/completeness.proofs` | Correct proofs that a checker must accept. |
+| `proofs/added-rules.proofs` | DD, ABS and QN, the rules added in 2026. |
+| `proofs/subproofs.proofs` | Conditional and indirect proof, and the scope of their subproofs. |
 | `parser.cases` | Inputs the formula parser must accept, with the structure it must build, or reject, with the column of the error. |
 
 All files are UTF-8. Lines that start with `#` are comments. Files are read in name order and cases in file order.
@@ -29,7 +31,7 @@ flexible: valid
 | `case` | Unique id, lowercase letters, digits and `-`. Required. |
 | `source` | Where the case comes from. Required. |
 | `problem` | `{premise//premise=>conclusion}`, the syntax of the 2018 `ProofParser`. Required. |
-| `N. formula ; justification` | One proof line. `N` is its line number: premises are lines 1 to k, so the first step is k + 1. The justification is the cited lines, comma-separated, and the rule name, as in `2,3 CONJ`. A case may have no steps. |
+| `N. formula ; justification` | One proof line. `N` is its line number: premises are lines 1 to k, so the first step is k + 1. The justification is what the line cites, comma-separated, and the rule name, as in `2,3 CONJ`, `2-4 CP` or `ACP`. A case may have no steps, and a problem may have no premises, as in `{=>P | ~P}`, so that the first step is line 1. Spaces after `N.` are ignored, so the lines of a subproof can be indented. |
 | `expect` | Verdict in both modes. |
 | `strict`, `flexible` | Verdict in one mode. A case has either `expect` or both of these. |
 | `legacy` | Why the 2018 engine, kept under the `legacy-2018` tag, got the flexible verdict wrong. History only: no test runs that engine any more. |
@@ -44,16 +46,26 @@ The reason is for people. A checker does not have to produce that text.
 
 ### Rules
 
-The 2018 rules, with Copi's names: CONJ, SIMP, ADD, MP, MT, DS, HS, CD (rules of inference) and DN, DM, COM, ASSOC, DIST, TRANS, IMPL, EQUIV, EXP, TAUT (rules of replacement), plus UI, EI, UG and EG for quantifiers.
+Copi's rules, with his names: CONJ, SIMP, ADD, MP, MT, DS, HS, CD, DD, ABS (rules of inference), DN, DM, COM, ASSOC, DIST, TRANS, IMPL, EQUIV, EXP, TAUT, QN (rules of replacement), UI, EI, UG, EG (quantification) and ACP, AIP, CP, IP (subproofs). The 2018 engine had all of them but DD, ABS, QN and the subproof rules.
 
 - A rule of inference applies to whole lines. A rule of replacement rewrites one subformula, anywhere in the line.
 - The order of the cited lines does not matter: `2,1 MP` is as good as `1,2 MP`.
-- A step must cite as many lines as its rule takes: two for CONJ, MP, MT, DS, HS and CD, one for the others. A line can only cite earlier lines.
+- A step must cite as many lines as its rule takes: two for CONJ, MP, MT, DS, HS, CD and DD, none for ACP and AIP, one range for CP and IP, and one line for the others. A line can only cite earlier lines.
 - A rule that does not apply never accepts a line, even if that line repeats an earlier one.
 - UI: `(∀x)Φx` gives `Φν` for any constant or variable `ν`, as long as no occurrence of `ν` ends up bound by a quantifier inside `Φ`.
 - EI: `(∃x)Φx` gives `Φa` only for a constant `a` that does not occur in the premises, the conclusion or any earlier line. EI to a variable is not allowed. Without the conclusion part, `(∃x)Ax ⊢ Aa` would be provable.
-- UG: `Φy` gives `(∀x)Φx` only if `y` is a variable, `y` is not free in any premise or in any line obtained by EI, and every free `y` in `Φy` becomes `x`.
+- UG: `Φy` gives `(∀x)Φx` only if `y` is a variable, `y` is not free in any premise, any open assumption or any line obtained by EI, and every free `y` in `Φy` becomes `x`.
+- QN: `~(∀x)Φ ≡ (∃x)~Φ`, `~(∃x)Φ ≡ (∀x)~Φ`, `(∀x)Φ ≡ ~(∃x)~Φ` and `(∃x)Φ ≡ ~(∀x)~Φ`, as a rule of replacement.
 - EG: `Φν` gives `(∃x)Φx` when replacing `x` by `ν` in `Φx` gives back `Φν`. It may generalize some occurrences of `ν` and leave others: `Faa` gives `(∃x)Fxa`.
+
+### Subproofs
+
+An ACP or AIP line assumes its formula and opens a subproof. CP or IP closes the innermost open subproof on the line right after its last line, and cites it as a range from the assumption to that last line, as in `2-4 CP`.
+
+- CP gives `p → q`, where `p` is the assumption and `q` the last line of the subproof.
+- IP needs the last line of the subproof to be a contradiction, `q & ~q`, and gives `~p`, the negation of the assumption, or `q` when the assumption is `~q`.
+- Once a subproof is closed, no later line can cite a line inside it.
+- Every subproof must be closed before the proof ends.
 
 ### Modes
 

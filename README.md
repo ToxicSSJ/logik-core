@@ -101,6 +101,17 @@ ModelSearch.countermodel(List.of(Formula.parse("(∀y)(∃x)Lxy")), Formula.pars
 
 The specification is plain data in [`src/test/resources/corpus`](src/test/resources/corpus): 244 proofs and 83 formulas, each with what the checker or the parser must do with it, in each mode. It holds the 96 proofs of the 2018 tests, some of them corrected, plus wrong proofs that must be rejected and correct ones that must be accepted. Its README describes the format and the rules in detail.
 
+## Running the corpus
+
+The jar's main class runs the whole corpus through the library and prints, in a fixed order: the checker's verdict on every proof in both modes, the parser's result on every parser case, whether every argument is valid, some truth tables and a semantic tree. Any result that disagrees with the corpus ends in `<-- expected …`, and the exit code is 1.
+
+```sh
+./mvnw package
+java -jar target/logik-core-0.0.1-SNAPSHOT.jar src/test/resources/corpus
+```
+
+The output is deterministic UTF-8, so a port of the library to another language can be checked by comparing its output with this one byte for byte. CI uploads it as the `corpus-output-java-*` artifact. With that in mind, the code avoids reflection, dynamic class loading, mutable static state and unordered hash collections, and the corpus reader uses plain string handling instead of regular expressions. Formulas and results are `sealed` interfaces and `record`s.
+
 ## History
 
 The first version was written in 2018, during a first semester of Systems Engineering, and is kept under the [`legacy-2018`](https://github.com/ToxicSSJ/logik-core/tree/legacy-2018) tag. It accepted some wrong proofs and rejected some right ones, so it was rewritten in 2026 with its tests as the specification.

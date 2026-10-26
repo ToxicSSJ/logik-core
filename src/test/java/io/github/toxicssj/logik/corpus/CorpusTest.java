@@ -24,7 +24,7 @@ class CorpusTest {
 
     @Test
     void readsAProof() {
-        List<ProofCase> cases = Corpus.parseProofs("test", List.of(
+        List<ProofCase> cases = CorpusReader.parseProofs("test", List.of(
                 "# a comment",
                 "case: modus-tollens",
                 "source: test",
@@ -58,40 +58,40 @@ class CorpusTest {
 
     @Test
     void rejectsAWrongStepNumber() {
-        assertThrows(IllegalStateException.class, () -> Corpus.parseProofs("test", List.of(
+        assertThrows(IllegalStateException.class, () -> CorpusReader.parseProofs("test", List.of(
                 "case: wrong-number", "source: test", "problem: {P//Q=>P & Q}",
                 "4. P & Q ; 1,2 CONJ", "expect: valid")));
     }
 
     @Test
     void rejectsAVerdictOnAPremise() {
-        assertThrows(IllegalStateException.class, () -> Corpus.parseProofs("test", List.of(
+        assertThrows(IllegalStateException.class, () -> CorpusReader.parseProofs("test", List.of(
                 "case: on-premise", "source: test", "problem: {P//Q=>P & Q}",
                 "3. P & Q ; 1,2 CONJ", "expect: invalid at 2: a premise")));
     }
 
     @Test
     void rejectsAMissingOrDoubleVerdict() {
-        assertThrows(IllegalStateException.class, () -> Corpus.parseProofs("test", List.of(
+        assertThrows(IllegalStateException.class, () -> CorpusReader.parseProofs("test", List.of(
                 "case: no-verdict", "source: test", "problem: {P=>P | Q}", "2. P | Q ; 1 ADD")));
-        assertThrows(IllegalStateException.class, () -> Corpus.parseProofs("test", List.of(
+        assertThrows(IllegalStateException.class, () -> CorpusReader.parseProofs("test", List.of(
                 "case: only-strict", "source: test", "problem: {P=>P | Q}", "2. P | Q ; 1 ADD",
                 "strict: valid")));
-        assertThrows(IllegalStateException.class, () -> Corpus.parseProofs("test", List.of(
+        assertThrows(IllegalStateException.class, () -> CorpusReader.parseProofs("test", List.of(
                 "case: both", "source: test", "problem: {P=>P | Q}", "2. P | Q ; 1 ADD",
                 "expect: valid", "strict: valid")));
     }
 
     @Test
     void rejectsUnknownKeys() {
-        assertThrows(IllegalStateException.class, () -> Corpus.parseProofs("test", List.of(
+        assertThrows(IllegalStateException.class, () -> CorpusReader.parseProofs("test", List.of(
                 "case: typo", "source: test", "problem: {P=>P | Q}", "2. P | Q ; 1 ADD",
                 "expcet: valid")));
     }
 
     @Test
     void readsParserCases() {
-        List<ParserCase> cases = Corpus.parseParserCases("test", List.of(
+        List<ParserCase> cases = CorpusReader.parseParserCases("test", List.of(
                 "# a comment",
                 "accept \"P & Q & R\" ; ((P & Q) & R)",
                 "reject \"\" ; 1 ; legacy: accepted"));
@@ -105,6 +105,6 @@ class CorpusTest {
     @Test
     void rejectsAParserCaseWithoutColumn() {
         assertThrows(IllegalStateException.class,
-                () -> Corpus.parseParserCases("test", List.of("reject \"(P\" ; (P")));
+                () -> CorpusReader.parseParserCases("test", List.of("reject \"(P\" ; (P")));
     }
 }

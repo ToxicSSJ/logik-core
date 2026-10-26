@@ -18,3 +18,7 @@ mvn verify
 ```
 
 La CI de GitHub Actions corre los tests en cada push y pull request, con Java 17 y 21.
+
+## Licencia
+
+[MIT](LICENSE).

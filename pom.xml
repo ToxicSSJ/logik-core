@@ -12,6 +12,13 @@
     <description>Propositional and predicate logic library: formula parser and natural-deduction proof checker.</description>
     <url>https://github.com/ToxicSSJ/logik-core</url>
 
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>

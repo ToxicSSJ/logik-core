@@ -10,6 +10,16 @@ The tests are a corpus of plain data in [`src/test/resources/corpus`](src/test/r
 
 The 2018 engine gets 117 of those 285 cases wrong. Each one carries a note with the reason and is reported as skipped.
 
+The rewrite has started with the `io.github.toxicssj.logik.syntax` package: immutable formulas and a parser that passes every parser case of the corpus.
+
+```java
+Formula f = Formula.parse("(x)(Hx ⊃ Mx)");     // Copi's notation, or ∀ → & | ~ and ASCII
+f.toString();                                  // "(∀x)(Hx → Mx)"
+f.alphaEquals(Formula.parse("(∀y)(Hy → My)")); // true
+FormulaParser.parse("(P & Q");                 // Failure: column 7, expected ')'
+Problem.parse("{(∀x)(Hx → Mx)//Hs=>Ms}");      // premises and conclusion
+```
+
 ## Build and test
 
 Requires Java 21 or later. The Maven Wrapper downloads the pinned Maven version:

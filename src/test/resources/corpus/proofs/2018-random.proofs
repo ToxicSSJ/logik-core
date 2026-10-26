@@ -1,0 +1,174 @@
+# Proofs from the 2018 test suite (PropositionalTests.java) named randomTest,
+# randomTest2, ..., randomTest15. The format is described in ../README.md.
+
+case: random-1
+source: 2018 test randomTest
+problem: {(F & H) → N//F | S//H=>N | S}
+4. (F | S) & H ; 2,3 CONJ
+5. H & (F | S) ; 4 COM
+6. (H & F) | (H & S) ; 5 DIST
+7. (H & S) | (H & F) ; 6 COM
+8. (H & S) | (F & H) ; 7 COM
+9. ~(H & S) → (F & H) ; 8 IMPL
+10. ~(H & S) → N ; 9,1 HS
+11. (H & S) | N ; 10 IMPL
+12. N | (H & S) ; 11 COM
+13. (N | H) & (N | S) ; 12 DIST
+14. (N | S) & (N | H) ; 13 COM
+15. N | S ; 14 SIMP
+strict: invalid at 9: IMPL needs ~~(H & S) | (F & H); line 8 has no ~~ to drop
+flexible: valid
+legacy: DIST never turns p | (q & r) into (p | q) & (p | r)
+
+case: random-2
+source: 2018 test randomTest2
+problem: {(F & H) → N//F | S//H=>N | S}
+4. ~(F & H) | N ; 1 IMPL
+5. (~F | ~H) | N ; 4 DM
+6. ~F | (~H | N) ; 5 ASSOC
+7. (~H | N) | ~F ; 6 COM
+8. ~H | (N | ~F) ; 7 ASSOC
+9. H → (N | ~F) ; 8 IMPL
+10. N | ~F ; 9,3 MP
+11. ~F | N ; 10 COM
+12. F → N ; 11 IMPL
+13. S | F ; 2 COM
+14. ~~S | F ; 13 DN
+15. ~S → F ; 13 IMPL
+16. ~S → N ; 15,12 HS
+17. ~~S | N ; 16 IMPL
+18. S | N ; 17 DN
+19. N | S ; 18 COM
+strict: invalid at 15: IMPL turns ~~S | F (line 14) into ~S → F, but line 15 cites S | F (line 13)
+flexible: valid
+legacy: IMPL and DM collapse double negations, so ~~S | N is rejected
+
+case: random-3
+source: 2018 test randomTest3
+problem: {A ↔ W//~A | ~W//R → A=>~(W | R)}
+4. (A & W) | (~A & ~W) ; 1 EQUIV
+5. ~(A & W) ; 2 DM
+6. ~A & ~W ; 4,5 DS
+7. ~W & ~A ; 6 COM
+8. ~W ; 7 SIMP
+9. ~A ; 6 SIMP
+10. ~R ; 3,9 MT
+11. ~W & ~R ; 8,10 CONJ
+12. ~(W | R) ; 11 DM
+expect: valid
+
+case: random-4
+source: 2018 test randomTest4
+problem: {A → B//~A → (C | D)//~B//~C=> D}
+5. ~A ; 1,3 MT
+6. C | D ; 2,5 MP
+7. D ; 6,4 DS
+expect: valid
+
+case: random-5
+source: 2018 test randomTest5, corrected
+# Fixed: HS on F → G and G → H gives F → H. The 2018 test wrote F → I,
+# in line 8 and in the conclusion.
+problem: {F → G//(F | H)//~G//H → (G → H)=>(F → H)}
+5. ~F ; 1,3 MT
+6. H ; 2,5 DS
+7. G → H ; 4,6 MP
+8. F → H ; 1,7 HS
+expect: valid
+
+case: random-5-as-written
+source: 2018 test randomTest5, as written
+problem: {F → G//(F | H)//~G//H → (G → H)=>(F → I)}
+5. ~F ; 1,3 MT
+6. H ; 2,5 DS
+7. G → H ; 4,6 MP
+8. F → I ; 1,7 HS
+expect: invalid at 8: HS on F → G and G → H gives F → H
+
+case: random-6
+source: 2018 test randomTest6
+problem: {~(A & B) | (~(E & F) → (C → D))//~~(A & B)//~(E & F)//(D → G)=>(C → G)}
+5. ~(E & F) → (C → D) ; 1,2 DS
+6. C → D ; 3,5 MP
+7. C → G ; 4,6 HS
+expect: valid
+legacy: MP requires the conditional to be cited first
+
+case: random-7
+source: 2018 test randomTest7
+problem: {(A → B)//(C | A)//A=>B}
+4. B ; 1,3 MP
+expect: valid
+
+case: random-8
+source: 2018 test randomTest8
+problem: {(A → B)//(B | C) → (D & E)//A=>D}
+4. B ; 1,3 MP
+5. (B | C) ; 4 ADD
+6. (D & E) ; 2,5 MP
+7. D ; 6 SIMP
+expect: valid
+
+case: random-9
+source: 2018 test randomTest9
+problem: {(C → B)//(A → B)//~B=>~A}
+4. ~A ; 2,3 MT
+expect: valid
+
+case: random-10
+source: 2018 test randomTest10
+problem: {(K → L)//(M → N) & S//(N → T)//(K | M)=>(L | T)}
+5. (M → N) ; 2 SIMP
+6. (M → T) ; 3,5 HS
+7. (K → L) & (M → T) ; 1,6 CONJ
+8. (L | T) ; 4,7 CD
+expect: valid
+legacy: HS and CD require a fixed citation order
+
+case: random-11
+source: 2018 test randomTest11
+problem: {~M & N//P→M//Q & R//(~P & Q)→S=>S | T}
+5. ~M ; 1 SIMP
+6. ~P ; 2,5 MT
+7. Q ; 3 SIMP
+8. (~P & Q) ; 6,7 CONJ
+9. S ; 4,8 MP
+10. S | T ; 9 ADD
+expect: valid
+
+case: random-12
+source: 2018 test randomTest12, corrected
+# Fixed: line 4 had 6, a typo for &.
+problem: {(A → B)//(C → D)//(A | C)=>(B | D)}
+4. (A → B) & (C → D) ; 1,2 CONJ
+5. (B | D) ; 3,4 CD
+expect: valid
+legacy: CD requires the conjunction of conditionals to be cited first
+
+case: random-13
+source: 2018 test randomTest13
+problem: {(A | B) → (C & D)//(D | E) → F//A=>F}
+4. (A | B) ; 3 ADD
+5. (C & D) ; 1,4 MP
+6. (D & C) ; 5 COM
+7. D ; 6 SIMP
+8. (D | E) ; 7 ADD
+9. F ; 2,8 MP
+expect: valid
+
+case: random-14
+source: 2018 test randomTest14
+problem: {(A → B)//A=>(A & B)}
+3. B ; 1,2 MP
+4. (A & B) ; 2,3 CONJ
+expect: valid
+
+case: random-15
+source: 2018 test randomTest15
+problem: {(∀x)(Mx → ~Px)//(∀x)(Hx → Mx)=>(∀x)(Hx → ~Px)}
+3. (Hy → My) ; 2 UI
+4. (My → ~Py) ; 1 UI
+5. (Hy → ~Py) ; 3,4 HS
+6. (∀x)(Hx → ~Px) ; 5 UG
+expect: valid
+legacy: UG only generalizes the constants a to w, not the variable y

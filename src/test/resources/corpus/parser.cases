@@ -1,0 +1,105 @@
+# Formula parser cases. The format and the syntax are described in README.md.
+#
+#   accept "<input>" ; <fully parenthesized formula> [ ; legacy: <note> ]
+#   reject "<input>" ; <column of the error> [ ; legacy: <note> ]
+#
+# The 2018 parser never reports an error with a position: every input in the
+# "Errors" section is either accepted or makes it crash.
+
+# --- Connectives and their aliases ---
+
+accept "P" ; P
+accept "P & Q" ; (P & Q)
+accept "P ∧ Q" ; (P & Q) ; legacy: drops ∧ and reads (P Q)
+accept "P · Q" ; (P & Q) ; legacy: drops · and reads (P Q)
+accept "P • Q" ; (P & Q) ; legacy: drops • and reads (P Q)
+accept "P | Q" ; (P | Q)
+accept "P ∨ Q" ; (P | Q) ; legacy: drops ∨ and reads (P Q)
+accept "~P" ; ~P
+accept "¬P" ; ~P ; legacy: drops ¬ and reads P
+accept "P → Q" ; (P → Q)
+accept "P -> Q" ; (P → Q) ; legacy: drops -> and reads (P Q)
+accept "P ⊃ Q" ; (P → Q) ; legacy: drops ⊃ and reads (P Q)
+accept "P ↔ Q" ; (P ↔ Q)
+accept "P <-> Q" ; (P ↔ Q) ; legacy: drops <-> and reads (P Q)
+accept "P ≡ Q" ; (P ↔ Q) ; legacy: drops ≡ and reads (P Q)
+accept "P→M" ; (P → M)
+accept "  P  &  Q  " ; (P & Q)
+
+# --- Precedence: ~ binds tightest, then &, |, → and ↔ ---
+
+accept "~P & Q" ; (~P & Q)
+accept "~(P & Q)" ; ~(P & Q)
+accept "~~P" ; ~~P
+accept "~P → Q" ; (~P → Q)
+accept "P & Q | R" ; ((P & Q) | R) ; legacy: no precedence, reads the flat list (P & Q | R)
+accept "P | Q & R" ; (P | (Q & R)) ; legacy: no precedence, reads the flat list (P | Q & R)
+accept "P | Q → R" ; ((P | Q) → R) ; legacy: no precedence, reads the flat list (P | Q → R)
+accept "P → Q | R" ; (P → (Q | R)) ; legacy: no precedence, reads the flat list (P → Q | R)
+accept "P → Q ↔ R" ; ((P → Q) ↔ R) ; legacy: no precedence, reads the flat list (P → Q ↔ R)
+accept "P ↔ Q → R" ; (P ↔ (Q → R)) ; legacy: no precedence, reads the flat list (P ↔ Q → R)
+accept "P ⊃ Q ≡ ~Q ⊃ ~P" ; ((P → Q) ↔ (~Q → ~P)) ; legacy: drops ⊃ and ≡ and reads (P Q ~Q ~P)
+
+# --- Grouping: & and | to the left, → and ↔ to the right ---
+
+accept "P & Q & R" ; ((P & Q) & R) ; legacy: no grouping, reads the flat list (P & Q & R)
+accept "P | Q | R" ; ((P | Q) | R) ; legacy: no grouping, reads the flat list (P | Q | R)
+accept "P → Q → R" ; (P → (Q → R)) ; legacy: no grouping, reads the flat list (P → Q → R)
+accept "P ↔ Q ↔ R" ; (P ↔ (Q ↔ R)) ; legacy: no grouping, reads the flat list (P ↔ Q ↔ R)
+accept "(P → Q) → R" ; ((P → Q) → R)
+accept "(P)" ; P
+accept "((P & Q))" ; (P & Q)
+accept "~(A)" ; ~A ; legacy: drops the negation of a parenthesized letter and reads A
+accept "[P & Q] | R" ; ((P & Q) | R)
+accept "[(A ⊃ B) · (C ⊃ D)]" ; ((A → B) & (C → D)) ; legacy: drops ⊃ and · and reads ((A B) (C D))
+
+# --- Predicates and quantifiers ---
+
+accept "Fa" ; Fa
+accept "Lxy" ; Lxy
+accept "Nfxs" ; Nfxs
+accept "Fa & Gb" ; (Fa & Gb)
+accept "Fxy & Gx" ; (Fxy & Gx)
+accept "(∀x)Fx" ; (∀x)Fx
+accept "(∃x)Fx" ; (∃x)Fx
+accept "(x)Fx" ; (∀x)Fx ; legacy: does not know Copi's (x) and crashes
+accept "(x)(Hx ⊃ Mx)" ; (∀x)(Hx → Mx) ; legacy: does not know Copi's (x) and crashes
+accept "∀x Fx" ; (∀x)Fx ; legacy: needs parentheses around ∀x and crashes
+accept "∃x(Fx & Gx)" ; (∃x)(Fx & Gx) ; legacy: needs parentheses around ∃x and crashes
+accept "(∀x)(Fx → Gx)" ; (∀x)(Fx → Gx)
+accept "(∀x)Fx → Gx" ; ((∀x)Fx → Gx)
+accept "(∀x)Fx & Gx" ; ((∀x)Fx & Gx)
+accept "~(∀x)Fx" ; ~(∀x)Fx
+accept "(∀x)~Fx" ; (∀x)~Fx
+accept "(∃x)(Ax)" ; (∃x)Ax ; legacy: drops the quantifier of a parenthesized formula and reads Ax
+accept "(∀x)(∃y)(Fx → Gxy)" ; (∀x)(∃y)(Fx → Gxy)
+accept "(∀x)(Fx → (∃x)Gx)" ; (∀x)(Fx → (∃x)Gx)
+accept "(∀y)((∀y)Ey & (∀x)(∀z)Axzy)" ; (∀y)((∀y)Ey & (∀x)(∀z)Axzy)
+
+# --- Errors ---
+
+reject "" ; 1 ; legacy: reads an empty formula
+reject "   " ; 4 ; legacy: reads an empty formula
+reject "(P & Q" ; 7 ; legacy: reads an empty formula
+reject "P & Q)" ; 6 ; legacy: crashes with NoSuchElementException
+reject "P Q R" ; 3 ; legacy: reads (P Q R), letters with no connective
+reject "P &" ; 4 ; legacy: reads (P &)
+reject "& P" ; 1 ; legacy: reads (& P)
+reject "P & 3" ; 5 ; legacy: drops 3 and reads (P &)
+reject "P →" ; 4 ; legacy: reads (P →)
+reject "~" ; 2 ; legacy: reads an empty formula
+reject "()" ; 2 ; legacy: reads an empty formula
+reject "Fx)" ; 3 ; legacy: crashes with NoSuchElementException
+reject "[P & Q)" ; 7 ; legacy: does not check that brackets match
+reject "P && Q" ; 4 ; legacy: reads (P & & Q)
+reject "P - Q" ; 3 ; legacy: drops - and reads (P Q)
+reject "ñ" ; 1 ; legacy: drops ñ and reads an empty formula
+reject "Pñ" ; 2 ; legacy: drops ñ and reads P
+reject "P v Q" ; 3 ; legacy: reads (Pv Q), two formulas with no connective
+reject "a & P" ; 1 ; legacy: crashes with NoSuchElementException
+reject "a = b" ; 1 ; legacy: crashes with NoSuchElementException
+reject "(∀x)" ; 5 ; legacy: reads an empty formula
+reject "(∀xy)Fxy" ; 4 ; legacy: crashes with NoSuchElementException
+reject "(∀a)Fa" ; 3 ; legacy: accepts a quantifier over a constant
+reject "∀ Fx" ; 3 ; legacy: drops ∀ and reads Fx
+reject "(∀x)(Fx → )" ; 11 ; legacy: reads (∀x)(Fx →)

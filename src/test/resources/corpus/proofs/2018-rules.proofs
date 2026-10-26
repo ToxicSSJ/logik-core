@@ -1,0 +1,350 @@
+# Proofs from the 2018 test suite (PropositionalTests.java) that exercise
+# one propositional rule each. The format is described in ../README.md.
+
+case: conjunction
+source: 2018 test conjunctionTest
+problem: {(A & C)//(A)//(B)=>(A & B)}
+4. A & B ; 2,3 CONJ
+expect: valid
+
+case: simplification-a
+source: 2018 test simplificationATest
+problem: {(~A & C) & (D & ~H)=>~A}
+2. ~A & C ; 1 SIMP
+3. ~A ; 2 SIMP
+expect: valid
+
+case: simplification-b
+source: 2018 test simplificationBTest
+problem: {(A → B)//(C & B)//(C → A)=>C}
+4. C ; 2 SIMP
+expect: valid
+
+case: addition
+source: 2018 test additionTest
+problem: {(~A & C) & (D & ~H)=>(~A | B) | ~(H & ~D)}
+2. ~A & C ; 1 SIMP
+3. ~A ; 2 SIMP
+4. ~A | B ; 3 ADD
+5. (~A | B) | ~(H & ~D) ; 4 ADD
+expect: valid
+
+case: implication-a
+source: 2018 test implicationATest
+problem: {(A → B) & N//C → A//D → E=>(((A → B) & (C → A)) & (D → E)) | (Z ↔ F)}
+4. A → B ; 1 SIMP
+5. (A → B) & (C → A) ; 4,2 CONJ
+6. ((A → B) & (C → A)) & (D → E) ; 5,3 CONJ
+7. (((A → B) & (C → A)) & (D → E)) | (Z ↔ F) ; 6 ADD
+expect: valid
+
+case: modus-ponens-a
+source: 2018 test modusPonensATest
+problem: {A → B//A=>B}
+3. B ; 1,2 MP
+expect: valid
+
+case: modus-ponens-b
+source: 2018 test modusPonensBTest
+problem: {A → (B → C)//B → (C → D)//A//B=>D}
+5. (B → C) ; 1,3 MP
+6. C ; 5,4 MP
+7. (C → D) ; 2,4 MP
+8. D ; 7,6 MP
+expect: valid
+
+case: modus-tollens
+source: 2018 test modusTollensTest
+problem: {A → ~B//B=>~A}
+3. ~A ; 1,2 MT
+strict: invalid at 3: MT needs ~~B, the negation of the consequent ~B; B becomes ~~B by DN first
+flexible: valid
+
+case: disjunctive-syllogism-a
+source: 2018 test disjunctiveSyllogismATest
+problem: {A | ~~B//~A=>~~B}
+3. ~~B ; 1,2 DS
+expect: valid
+
+case: disjunctive-syllogism-b
+source: 2018 test disjunctiveSyllogismBTest
+problem: {S//~S=>T}
+3. S | T ; 1 ADD
+4. T ; 3,2 DS
+expect: valid
+
+case: disjunctive-syllogism-c
+source: 2018 test disjunctiveSyllogismCTest
+problem: {(A | ~~B) | ~(K & ~D)//~(A | ~~B)=>~(K & ~D)}
+3. ~(K & ~D) ; 1,2 DS
+expect: valid
+
+case: hypothetical-syllogism-a
+source: 2018 test hypoteticalSyllogismTest
+problem: {(C → K)//(K → H)=>(C → H)}
+3. (C → H) ; 1,2 HS
+expect: valid
+
+case: hypothetical-syllogism-b
+source: 2018 test hypoteticalSyllogismBTest
+problem: {(Ka → ~Na)//(~(Ka → Ha) → Ka)=>(~(Ka → Ha) → ~Na)}
+3. (~(Ka → Ha) → ~Na) ; 2,1 HS
+expect: valid
+
+case: constructive-dilemma-a
+source: 2018 test constructiveDilemaTest
+problem: {((A → B) & (C → D))//(A | C)=>(B | D)}
+3. (B | D) ; 1,2 CD
+expect: valid
+
+case: constructive-dilemma-b
+source: 2018 test constructiveDilemaBTest
+problem: {((~Aa → Bx) & (~Ca → Dx))//(~Aa | ~Ca)=>(Bx | Dx)}
+3. (Bx | Dx) ; 1,2 CD
+expect: valid
+
+case: implication-b
+source: 2018 test implicationBTest
+problem: {((Ah → Bj) & (Cc → ~Dd))//(Ah | Cc)//~Bj//Uf//Hk//(Dd | (Uf → (~Sf → ~Hk)))=>~~Sf}
+7. (Bj | ~Dd) ; 1,2 CD
+8. ~Dd ; 7,3 DS
+9. (Uf → (~Sf → ~Hk)) ; 6,8 DS
+10. (~Sf → ~Hk) ; 9,4 MP
+11. ~~Sf ; 10,5 MT
+strict: invalid at 11: MT needs ~~Hk, the negation of the consequent ~Hk
+flexible: valid
+
+case: implication-c
+source: 2018 test implicationCTest
+problem: {(N → A) & (~N → ~A)=>N ↔ A}
+2. (N → A) & (A → N) ; 1 TRANS
+3. N ↔ A ; 2 EQUIV
+expect: valid
+
+case: de-morgan-a
+source: 2018 test deMorganTest
+problem: {~(~A & B)=>(A | ~B)}
+2. (A | ~B) ; 1 DM
+strict: invalid at 2: DM gives ~~A | ~B; dropping ~~ is a DN step
+flexible: valid
+
+case: de-morgan-b
+source: 2018 test deMorganBTest
+problem: {~(~A | B)=>(A & ~B)}
+2. (A & ~B) ; 1 DM
+strict: invalid at 2: DM gives ~~A & ~B; dropping ~~ is a DN step
+flexible: valid
+
+case: de-morgan-c
+source: 2018 test deMorganCTest
+problem: {(~A & ~(~A & B)) | (C & D)=>(~A & (A | ~B)) | (C & D)}
+2. (~A & (A | ~B)) | (C & D) ; 1 DM
+strict: invalid at 2: DM gives ~~A | ~B; dropping ~~ is a DN step
+flexible: valid
+
+case: de-morgan-d
+source: 2018 test deMorganDTest
+problem: {(~A & ~(~A & (B | Lx))) | (C & D)=>(~A & ~(~A & ~(~B & ~Lx))) | (C & D)}
+2. (~A & ~(~A & ~(~B & ~Lx))) | (C & D) ; 1 DM
+strict: invalid at 2: DM turns ~(~B & ~Lx) into ~~B | ~~Lx, not into B | Lx
+flexible: valid
+
+case: de-morgan-e
+source: 2018 test deMorganETest
+problem: {(~A & ~(~A & (B | Lx))) | ((∀x)Cx | ~(∀x)Dx)=>(~A & ~(~A & (B | Lx))) | ~(~(∀x)Cx & (∀x)Dx)}
+2. (~A & ~(~A & (B | Lx))) | ~(~(∀x)Cx & (∀x)Dx) ; 1 DM
+strict: invalid at 2: DM turns ~(~(∀x)Cx & (∀x)Dx) into ~~(∀x)Cx | ~(∀x)Dx
+flexible: valid
+
+case: commutativity-a
+source: 2018 test commutativityTest
+problem: {(C | D)=>(D | C)}
+2. (D | C) ; 1 COM
+expect: valid
+
+case: commutativity-b
+source: 2018 test commutativityBTest
+problem: {(C & (D | H))=>(H | D)}
+2. (D | H) & C ; 1 COM
+3. (D | H) ; 2 SIMP
+4. (H | D) ; 3 COM
+expect: valid
+
+case: commutativity-c
+source: 2018 test commutativityCTest
+problem: {(C & ~(D | H))=>~(H | D)}
+2. ~(D | H) & C ; 1 COM
+3. ~(D | H) ; 2 SIMP
+4. ~(H | D) ; 3 COM
+expect: valid
+
+case: associativity-a
+source: 2018 test associativityATest
+problem: {A & (B & C)=>(A & B) & C}
+2. (A & B) & C ; 1 ASSOC
+expect: valid
+
+case: associativity-b
+source: 2018 test associativityBTest
+problem: {A & (~B & C)=>(A & ~B) & C}
+2. (A & ~B) & C ; 1 ASSOC
+expect: valid
+
+case: associativity-c
+source: 2018 test associativityCTest
+problem: {A & (~B & ((C & H) & ~Kx))=>(A & ~B) & ((C & H) & ~Kx)}
+2. (A & ~B) & ((C & H) & ~Kx) ; 1 ASSOC
+expect: valid
+
+case: distribution-a
+source: 2018 test distributionATest
+problem: {(A & B) | (A & C)=>A & (B | C)}
+2. (A & (B | C)) ; 1 DIST
+expect: valid
+
+case: distribution-b
+source: 2018 test distributionBTest
+problem: {(A | B) & (A | C)=>A | (B & C)}
+2. A | (B & C) ; 1 DIST
+expect: valid
+
+case: distribution-c
+source: 2018 test distributionCTest
+problem: {(A & B) | (A & ((Lx | Hx) & (Lx | Nx)))=>B | (Lx | (Hx & Nx))}
+2. A & (B | ((Lx | Hx) & (Lx | Nx))) ; 1 DIST
+3. (B | ((Lx | Hx) & (Lx | Nx))) & A ; 2 COM
+4. (B | ((Lx | Hx) & (Lx | Nx))) ; 3 SIMP
+5. B | (Lx | (Hx & Nx)) ; 4 DIST
+expect: valid
+
+case: double-negation-a
+source: 2018 test doubleNegationATest
+problem: {~~A=>A}
+2. A ; 1 DN
+expect: valid
+
+case: double-negation-b
+source: 2018 test doubleNegationBTest
+problem: {~~A & ~~B=>~~A & B}
+2. ~~A & B ; 1 DN
+expect: valid
+
+case: double-negation-c
+source: 2018 test doubleNegationCTest
+problem: {(~~An & ~~Bn) | Dn=>~~(~~An & Bn) | ~~Dn}
+2. (~~An & Bn) | Dn ; 1 DN
+3. (~~An & Bn) | ~~Dn ; 2 DN
+4. ~~(~~An & Bn) | ~~Dn ; 3 DN
+expect: valid
+
+case: transposition-a
+source: 2018 test transpositionATest
+problem: {A → B=>~B → ~A}
+2. ~B → ~A ; 1 TRANS
+expect: valid
+
+case: transposition-b
+source: 2018 test transpositionBTest
+problem: {A → B=>(A → B) | (D → H)}
+2. ~B → ~A ; 1 TRANS
+3. A → B ; 2 TRANS
+4. (A → B) | (~H → ~D) ; 3 ADD
+5. (A → B) | (D → H) ; 4 TRANS
+expect: valid
+
+case: transposition-c
+source: 2018 test transpositionCTest
+problem: {~~(~~Ha → (Fx → ~Sx))=>~~(~~Ha → (Sx → ~Fx))}
+2. ~~(~~Ha → (Sx → ~Fx)) ; 1 TRANS
+strict: invalid at 2: TRANS turns Fx → ~Sx into ~~Sx → ~Fx
+flexible: valid
+
+case: material-implication-a
+source: 2018 test materialImplicationATest
+problem: {A → B=>~A | B}
+2. ~A | B ; 1 IMPL
+expect: valid
+
+case: material-implication-b
+source: 2018 test materialImplicationBTest
+problem: {H | ~(C → B)//~H=>(C & ~B)}
+3. ~(C → B) ; 1,2 DS
+4. ~(~C | B) ; 3 IMPL
+5. (C & ~B) ; 4 DM
+strict: invalid at 5: DM gives ~~C & ~B; dropping ~~ is a DN step
+flexible: valid
+
+case: material-implication-c
+source: 2018 test materialImplicationCTest
+problem: {~~(Nx → ~(C → ~~(Ah → Bh)))=>~~(Nx → ~(C → ~~(Bh | ~Ah)))}
+2. ~~(Nx → ~(C → ~~(~Ah | Bh))) ; 1 IMPL
+3. ~~(Nx → ~(C → ~~(Bh | ~Ah))) ; 2 COM
+expect: valid
+
+case: material-implication-d
+source: 2018 test materialImplicationDTest
+problem: {~~(Nx → ~(C → ~~(Ah → Bh)))=>~~(Nx → ~(~C | ~~(Bh | ~Ah)))}
+2. ~~(Nx → ~(C → ~~(~Ah | Bh))) ; 1 IMPL
+3. ~~(Nx → ~(C → ~~(Bh | ~Ah))) ; 2 COM
+4. ~~(Nx → ~(~C | ~~(Bh | ~Ah))) ; 3 IMPL
+expect: valid
+
+case: material-equivalence-a
+source: 2018 test materialEquivalenceATest
+problem: {(A → B) & (B → A)=>A ↔ B}
+2. A ↔ B ; 1 EQUIV
+expect: valid
+
+case: material-equivalence-b
+source: 2018 test materialEquivalenceBTest
+problem: {A ↔ B=>(A → B) & (B → A)}
+2. (A → B) & (B → A) ; 1 EQUIV
+expect: valid
+
+case: material-equivalence-c
+source: 2018 test materialEquivalenceCTest
+problem: {H & ((A ↔ B) & (Rx ↔ Sx))=>H & (((A → B) & (B → A)) & ((Rx & Sx) | (~Rx & ~Sx)))}
+2. H & (((A → B) & (B → A)) & (Rx ↔ Sx)) ; 1 EQUIV
+3. H & (((A → B) & (B → A)) & ((Rx & Sx) | (~Rx & ~Sx))) ; 2 EQUIV
+expect: valid
+
+case: exportation-a
+source: 2018 test exportationATest
+# The 2018 test had this proof commented out, so it always passed.
+problem: {(H & C) → D=>H → (C → D)}
+2. H → (C → D) ; 1 EXP
+expect: valid
+
+case: exportation-b
+source: 2018 test exportationBTest
+problem: {((H & C) → D) & (H → (C → D))=>(H → (C → D)) & ((H & C) → D)}
+2. (H → (C → D)) & (H → (C → D)) ; 1 EXP
+3. (H → (C → D)) & ((H & C) → D) ; 2 EXP
+expect: valid
+
+case: exportation-c
+source: 2018 test exportationCTest
+problem: {~((Rx & Ax) | (C ↔ Nfxs)) ↔ ~(((H & ~C) → D) & (H → (~C → D)))=>~((Rx & Ax) | (C ↔ Nfxs)) ↔ ~((H → (~C → D)) & ((H & ~C) → D))}
+2. ~((Rx & Ax) | (C ↔ Nfxs)) ↔ ~((H → (~C → D)) & (H → (~C → D))) ; 1 EXP
+3. ~((Rx & Ax) | (C ↔ Nfxs)) ↔ ~((H → (~C → D)) & ((H & ~C) → D)) ; 2 EXP
+expect: valid
+
+case: tautology-a
+source: 2018 test tautologyATest
+problem: {A & A=>A}
+2. A ; 1 TAUT
+expect: valid
+
+case: tautology-b
+source: 2018 test tautologyBTest
+problem: {(A & A) & (C & (C & (D & D)))=>(C & (C & D))}
+2. (C & (C & (D & D))) & (A & A) ; 1 COM
+3. (C & (C & (D & D))) ; 2 SIMP
+4. (C & (C & D)) ; 3 TAUT
+expect: valid
+
+case: tautology-c
+source: 2018 test tautologyCTest
+problem: {(A & A) & (C & (C ↔ (~Dxsa & ~Dxsa)))=>(A & A) & (C & (C ↔ ~Dxsa))}
+2. (A & A) & (C & (C ↔ ~Dxsa)) ; 1 TAUT
+expect: valid

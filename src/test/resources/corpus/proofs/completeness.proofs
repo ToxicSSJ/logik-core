@@ -1,0 +1,290 @@
+# Correct proofs that a checker must accept, at least in flexible mode.
+# Most come from the probes run against the 2018 engine on 2026-10-26.
+# The format is described in ../README.md.
+
+# --- Citation order ---
+
+case: conj-citations-reversed
+source: completeness probe
+problem: {P//Q=>Q & P}
+3. Q & P ; 2,1 CONJ
+expect: valid
+
+case: conj-same-line-twice
+source: completeness
+problem: {P=>P & P}
+2. P & P ; 1,1 CONJ
+expect: valid
+
+case: mp-citations-reversed
+source: completeness probe
+problem: {P → Q//P=>Q}
+3. Q ; 2,1 MP
+expect: valid
+legacy: MP requires the conditional to be cited first
+
+case: mt-citations-reversed
+source: completeness
+problem: {P → Q//~Q=>~P}
+3. ~P ; 2,1 MT
+expect: valid
+legacy: MT requires the conditional to be cited first
+
+case: ds-citations-reversed
+source: completeness
+problem: {P | Q//~P=>Q}
+3. Q ; 2,1 DS
+expect: valid
+legacy: DS requires the disjunction to be cited first
+
+case: hs-citations-reversed
+source: completeness
+problem: {P → Q//Q → R=>P → R}
+3. P → R ; 2,1 HS
+expect: valid
+legacy: HS requires the first link of the chain to be cited first
+
+case: cd-citations-reversed
+source: completeness
+problem: {(P → Q) & (R → S)//P | R=>Q | S}
+3. Q | S ; 2,1 CD
+expect: valid
+legacy: CD requires the conjunction of conditionals to be cited first
+
+# --- Rules of replacement ---
+
+case: dist-or-over-and
+source: completeness probe
+problem: {P | (Q & R)=>(P | Q) & (P | R)}
+2. (P | Q) & (P | R) ; 1 DIST
+expect: valid
+legacy: DIST never turns p | (q & r) into (p | q) & (p | r)
+
+case: dist-and-over-or
+source: completeness probe
+problem: {P & (Q | R)=>(P & Q) | (P & R)}
+2. (P & Q) | (P & R) ; 1 DIST
+expect: valid
+
+case: dist-factor-out
+source: completeness probe
+problem: {(P & Q) | (P & R)=>P & (Q | R)}
+2. P & (Q | R) ; 1 DIST
+expect: valid
+
+case: taut-introduce-disjunction
+source: completeness probe
+problem: {P=>P | P}
+2. P | P ; 1 TAUT
+expect: valid
+legacy: TAUT only removes repetitions
+
+case: taut-introduce-conjunction
+source: completeness
+problem: {P=>P & P}
+2. P & P ; 1 TAUT
+expect: valid
+legacy: TAUT only removes repetitions
+
+case: taut-remove-conjunction
+source: completeness probe
+problem: {P & P=>P}
+2. P ; 1 TAUT
+expect: valid
+
+case: taut-remove-disjunction
+source: completeness
+problem: {P | P=>P}
+2. P ; 1 TAUT
+expect: valid
+
+case: com-nested
+source: completeness probe
+problem: {R → (P & Q)=>R → (Q & P)}
+2. R → (Q & P) ; 1 COM
+expect: valid
+
+case: assoc-disjunction
+source: completeness
+problem: {(P | Q) | R=>P | (Q | R)}
+2. P | (Q | R) ; 1 ASSOC
+expect: valid
+
+case: dm-or-to-and
+source: completeness probe
+problem: {~(P | Q)=>~P & ~Q}
+2. ~P & ~Q ; 1 DM
+expect: valid
+
+case: dm-to-negated-and
+source: completeness probe
+problem: {~P | ~Q=>~(P & Q)}
+2. ~(P & Q) ; 1 DM
+expect: valid
+
+case: dm-keeps-double-negation
+source: completeness, from parcial1ManuelSierraTuesday3
+problem: {~(~L & M)=>~~L | ~M}
+2. ~~L | ~M ; 1 DM
+expect: valid
+legacy: DM collapses the double negation and gives L | ~M
+
+case: impl-keeps-double-negation
+source: completeness, from randomTest2
+problem: {~S → N=>~~S | N}
+2. ~~S | N ; 1 IMPL
+expect: valid
+legacy: IMPL collapses the double negation and gives S | N
+
+case: impl-to-conditional
+source: completeness probe
+problem: {~P | Q=>P → Q}
+2. P → Q ; 1 IMPL
+expect: valid
+
+case: dn-nested
+source: completeness probe
+problem: {R → ~~P=>R → P}
+2. R → P ; 1 DN
+expect: valid
+
+case: exp-forward
+source: completeness probe
+problem: {(P & Q) → R=>P → (Q → R)}
+2. P → (Q → R) ; 1 EXP
+expect: valid
+
+case: exp-backward
+source: completeness
+problem: {P → (Q → R)=>(P & Q) → R}
+2. (P & Q) → R ; 1 EXP
+expect: valid
+
+case: equiv-to-conditionals
+source: completeness probe
+problem: {P ↔ Q=>(P → Q) & (Q → P)}
+2. (P → Q) & (Q → P) ; 1 EQUIV
+expect: valid
+
+case: equiv-from-cases
+source: completeness
+problem: {(P & Q) | (~P & ~Q)=>P ↔ Q}
+2. P ↔ Q ; 1 EQUIV
+expect: valid
+
+case: trans-forward
+source: completeness probe
+problem: {P → Q=>~Q → ~P}
+2. ~Q → ~P ; 1 TRANS
+expect: valid
+
+case: replacement-inside-quantifier
+source: completeness
+problem: {(∀x)(Fx → Gx)=>(∀x)(~Fx | Gx)}
+2. (∀x)(~Fx | Gx) ; 1 IMPL
+expect: valid
+
+# --- Quantifiers ---
+
+case: ui-then-ug
+source: completeness probe
+problem: {(∀x)Fx=>(∀y)Fy}
+2. Fy ; 1 UI
+3. (∀y)Fy ; 2 UG
+expect: valid
+
+case: ui-to-constant
+source: completeness probe
+problem: {(∀x)(Fx → Gx)=>Fa → Ga}
+2. Fa → Ga ; 1 UI
+expect: valid
+
+case: ui-to-free-variable
+source: completeness
+problem: {(∀x)(∃y)Lxy=>(∃y)Lzy}
+2. (∃y)Lzy ; 1 UI
+expect: valid
+
+case: ui-under-shadowing-quantifier
+source: completeness probe
+problem: {(∀x)(Fx → (∃x)Gx)=>Fa → (∃x)Gx}
+2. Fa → (∃x)Gx ; 1 UI
+expect: valid
+
+case: ui-nested-quantifier
+source: completeness probe
+problem: {(∀x)(∃y)Lxy=>(∃y)Lay}
+2. (∃y)Lay ; 1 UI
+expect: valid
+
+case: eg-every-occurrence
+source: completeness probe
+problem: {Fa=>(∃x)Fx}
+2. (∃x)Fx ; 1 EG
+expect: valid
+
+case: eg-some-occurrences
+source: completeness probe
+problem: {Faa=>(∃x)Fxa}
+2. (∃x)Fxa ; 1 EG
+expect: valid
+legacy: EG replaces every occurrence of the constant
+
+case: existential-swap
+source: completeness
+problem: {(∃x)(∃y)Lxy=>(∃y)(∃x)Lxy}
+2. (∃y)Lay ; 1 EI
+3. Lab ; 2 EI
+4. (∃x)Lxb ; 3 EG
+5. (∃y)(∃x)Lxy ; 4 EG
+expect: valid
+
+# --- Strict and flexible modes ---
+
+case: simp-right-conjunct
+source: completeness probe
+problem: {P & Q=>Q}
+2. Q ; 1 SIMP
+strict: invalid at 2: SIMP takes the left conjunct; Q needs a COM step first
+flexible: valid
+legacy: SIMP only takes the left conjunct
+
+case: ds-drops-right-disjunct
+source: completeness
+problem: {P | Q//~Q=>P}
+3. P ; 1,2 DS
+strict: invalid at 3: DS drops the left disjunct; dropping Q needs a COM step first
+flexible: valid
+legacy: DS only drops the left disjunct
+
+case: add-on-the-left
+source: completeness
+problem: {P=>Q | P}
+2. Q | P ; 1 ADD
+strict: invalid at 2: ADD adds a right disjunct and gives P | Q
+flexible: valid
+legacy: ADD only adds a right disjunct
+
+case: com-on-biconditional
+source: completeness probe
+problem: {P ↔ Q=>Q ↔ P}
+2. Q ↔ P ; 1 COM
+strict: invalid at 2: Copi's COM covers & and |, not ↔
+flexible: valid
+legacy: COM does not apply to ↔
+
+case: conclusion-up-to-commutation
+source: completeness
+problem: {P//Q=>P & Q}
+3. Q & P ; 2,1 CONJ
+strict: invalid at end: the last line is Q & P, and the conclusion is P & Q
+flexible: valid
+legacy: the last line has to be the conclusion exactly
+
+case: bound-variable-renamed
+source: completeness
+problem: {(∀x)Fx//Q=>(∀y)Fy & Q}
+3. (∀y)Fy & Q ; 1,2 CONJ
+strict: invalid at 3: CONJ gives (∀x)Fx & Q; renaming x to y takes UI and UG
+flexible: valid
+legacy: the 2018 engine does not rename bound variables, so Fx and Fy differ

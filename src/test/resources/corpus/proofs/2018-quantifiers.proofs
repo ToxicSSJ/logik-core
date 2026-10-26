@@ -1,0 +1,435 @@
+# Proofs from the 2018 test suite (PropositionalTests.java) that use the
+# quantifier rules UI, EI, UG and EG. The format is described in ../README.md.
+#
+# Many of these broke the EI or UG restrictions: EI to a constant that is in
+# the conclusion, EI to a variable, or UG on a variable that is free in a
+# premise. Each one keeps its id in a corrected form, and the proof as it
+# was written is kept as an "-as-written" case that must be rejected.
+
+case: copi-a
+source: 2018 test copiATest (all humans are mortal; Socrates is human)
+problem: {(∀x)(Hx → Mx)//Hs=>Ms}
+3. (Hs → Ms) ; 1 UI
+4. Ms ; 3,2 MP
+expect: valid
+
+case: ui-a
+source: 2018 test UIATest
+problem: {(∀x)Ax=>Aa}
+2. Aa ; 1 UI
+expect: valid
+
+case: ui-b
+source: 2018 test UIBTest
+problem: {(∀x)Axfg=>Avfg}
+2. Avfg ; 1 UI
+expect: valid
+
+case: ui-c
+source: 2018 test UICTest
+problem: {(∀x)(∀z)Axzg=>Aazg}
+2. (∀z)Aazg ; 1 UI
+3. Aazg ; 2 UI
+expect: valid
+
+case: ui-d
+source: 2018 test UIDTest
+problem: {(∀y)(Ey & (∀x)(∀z)Axzy)=>Aabc}
+2. Ec & (∀x)(∀z)Axzc ; 1 UI
+3. (∀x)(∀z)Axzc & Ec ; 2 COM
+4. (∀x)(∀z)Axzc ; 3 SIMP
+5. (∀z)Aazc ; 4 UI
+6. Aabc ; 5 UI
+expect: valid
+
+case: ui-e
+source: 2018 test UIETest
+problem: {(∀y)((∀y)Ey & (∀x)(∀z)Axzy)=>Aabc}
+2. (∀y)Ey & (∀x)(∀z)Axzc ; 1 UI
+3. (∀x)(∀z)Axzc & (∀y)Ey ; 2 COM
+4. (∀x)(∀z)Axzc ; 3 SIMP
+5. (∀z)Aazc ; 4 UI
+6. Aabc ; 5 UI
+expect: valid
+
+case: ui-f
+source: 2018 test UIFTest
+problem: {Lhd//(∀x)(Lxd → Lxt)//(∀x)(Lhx → Gx)=>Gt}
+4. (Lhd → Lht) ; 2 UI
+5. Lht ; 4,1 MP
+6. (Lht → Gt) ; 3 UI
+7. Gt ; 6,5 MP
+expect: valid
+
+case: ei-a
+source: 2018 test EIATest, corrected
+# Fixed: the 2018 conclusion was Aa, and (∃x)Ax ⊢ Aa is not a valid argument.
+problem: {(∃x)Ax=>(∃y)Ay}
+2. Aa ; 1 EI
+3. (∃y)Ay ; 2 EG
+expect: valid
+
+case: ei-a-as-written
+source: 2018 test EIATest, as written
+problem: {(∃x)Ax=>Aa}
+2. Aa ; 1 EI
+expect: invalid at 2: EI needs a new constant, and a occurs in the conclusion
+legacy: the 2018 engine does not check the conclusion when EI picks a constant
+
+case: ei-b
+source: 2018 test EIBTest, corrected
+# Fixed: the 2018 conclusion was Attt, which contains the EI constant.
+problem: {(∃y)Ayyy=>(∃x)Axxx}
+2. Attt ; 1 EI
+3. (∃x)Axxx ; 2 EG
+expect: valid
+
+case: ei-b-as-written
+source: 2018 test EIBTest, as written
+problem: {(∃y)Ayyy=>Attt}
+2. Attt ; 1 EI
+expect: invalid at 2: EI needs a new constant, and t occurs in the conclusion
+legacy: the 2018 engine does not check the conclusion when EI picks a constant
+
+case: ei-c
+source: 2018 test EICTest, corrected
+# Fixed: the 2018 conclusion was Eb, which contains the EI constant.
+problem: {Ea & (∃y)Ey=>(∃x)Ex}
+2. (∃y)Ey & Ea ; 1 COM
+3. (∃y)Ey ; 2 SIMP
+4. Eb ; 3 EI
+5. (∃x)Ex ; 4 EG
+expect: valid
+
+case: ei-c-as-written
+source: 2018 test EICTest, as written
+problem: {Ea & (∃y)Ey=>Eb}
+2. (∃y)Ey & Ea ; 1 COM
+3. (∃y)Ey ; 2 SIMP
+4. Eb ; 3 EI
+expect: invalid at 4: EI needs a new constant, and b occurs in the conclusion
+legacy: the 2018 engine does not check the conclusion when EI picks a constant
+
+case: ei-d
+source: 2018 test EIDTest, corrected
+# Fixed: the 2018 conclusion was Eaak, which contains the EI constant k.
+problem: {(∃z)((∀x)Exaz & (∃x)Exxz)=>(∃z)Eaaz}
+2. (∀x)Exak & (∃x)Exxk ; 1 EI
+3. (∀x)Exak ; 2 SIMP
+4. Eaak ; 3 UI
+5. (∃z)Eaaz ; 4 EG
+expect: valid
+
+case: ei-d-as-written
+source: 2018 test EIDTest, as written
+problem: {(∃z)((∀x)Exaz & (∃x)Exxz)=>Eaak}
+2. (∀x)Exak & (∃x)Exxk ; 1 EI
+3. (∀x)Exak ; 2 SIMP
+4. Eaak ; 3 UI
+expect: invalid at 2: EI needs a new constant, and k occurs in the conclusion
+legacy: the 2018 engine does not check the conclusion when EI picks a constant
+
+case: ei-e
+source: 2018 test EIETest, corrected
+# Fixed: the 2018 conclusion was Ejjk, which contains the EI constants j and k.
+# Line 2 instantiates a quantifier that binds nothing, so it changes nothing.
+problem: {(∃x)((∀x)Waxs & (∃x)(∃z)Exxz)=>(∃z)(∃x)Exxz}
+2. (∀x)Waxs & (∃x)(∃z)Exxz ; 1 EI
+3. (∃x)(∃z)Exxz & (∀x)Waxs ; 2 COM
+4. (∃x)(∃z)Exxz ; 3 SIMP
+5. (∃z)Ejjz ; 4 EI
+6. Ejjk ; 5 EI
+7. (∃x)Exxk ; 6 EG
+8. (∃z)(∃x)Exxz ; 7 EG
+expect: valid
+
+case: ei-e-as-written
+source: 2018 test EIETest, as written
+problem: {(∃x)((∀x)Waxs & (∃x)(∃z)Exxz)=>Ejjk}
+2. (∀x)Waxs & (∃x)(∃z)Exxz ; 1 EI
+3. (∃x)(∃z)Exxz & (∀x)Waxs ; 2 COM
+4. (∃x)(∃z)Exxz ; 3 SIMP
+5. (∃z)Ejjz ; 4 EI
+6. Ejjk ; 5 EI
+expect: invalid at 5: EI needs a new constant, and j occurs in the conclusion
+legacy: the 2018 engine does not check the conclusion when EI picks a constant
+
+case: ug-a
+source: 2018 test UGATest, corrected
+# Fixed: the 2018 premise was Wx & Bx, with x free, so UG on x was not allowed.
+problem: {(∀x)(Wx & Bx)=>(∀x)(Wx)}
+2. Wx & Bx ; 1 UI
+3. Wx ; 2 SIMP
+4. (∀x)(Wx) ; 3 UG
+expect: valid
+
+case: ug-a-as-written
+source: 2018 test UGATest, as written
+problem: {Wx & Bx=>(∀x)(Wx)}
+2. Wx ; 1 SIMP
+3. (∀x)(Wx) ; 2 UG
+expect: invalid at 3: UG cannot generalize x, which is free in premise 1
+legacy: the 2018 engine lets UG generalize a variable that is free in a premise
+
+case: ug-b
+source: 2018 test UGBTest, corrected
+# Fixed: the 2018 premise was Wx & Bx, with x free, so UG on x was not allowed.
+problem: {(∀y)(Wy & By)=>(∀x)(Wx & Bx)}
+2. Wx & Bx ; 1 UI
+3. (∀x)(Wx & Bx) ; 2 UG
+expect: valid
+
+case: ug-b-as-written
+source: 2018 test UGBTest, as written
+problem: {Wx & Bx=>(∀x)(Wx & Bx)}
+2. (∀x)(Wx & Bx) ; 1 UG
+expect: invalid at 2: UG cannot generalize x, which is free in premise 1
+legacy: the 2018 engine lets UG generalize a variable that is free in a premise
+
+case: ug-c
+source: 2018 test UGCTest, corrected
+# Fixed: the 2018 premise was Ax, with x free, so UG on x was not allowed.
+problem: {(∀x)Ax=>(∀y)(∀x)(Ax | By)}
+2. Ax ; 1 UI
+3. Ax | By ; 2 ADD
+4. (∀x)(Ax | By) ; 3 UG
+5. (∀y)(∀x)(Ax | By) ; 4 UG
+expect: valid
+
+case: ug-c-as-written
+source: 2018 test UGCTest, as written
+problem: {Ax=>(∀y)(∀x)(Ax | By)}
+2. Ax | By ; 1 ADD
+3. (∀x)(Ax | By) ; 2 UG
+4. (∀y)(∀x)(Ax | By) ; 3 UG
+expect: invalid at 3: UG cannot generalize x, which is free in premise 1
+legacy: the 2018 engine lets UG generalize a variable that is free in a premise
+
+case: ug-d
+source: 2018 test UGDTest, corrected
+# Fixed: the 2018 premise was Ax, with x free, so UG on x was not allowed.
+problem: {(∀x)Ax=>(∀x)(Bx | Ax)}
+2. Ax ; 1 UI
+3. Ax | Bx ; 2 ADD
+4. Bx | Ax ; 3 COM
+5. (∀x)(Bx | Ax) ; 4 UG
+expect: valid
+
+case: ug-d-as-written
+source: 2018 test UGDTest, as written
+problem: {Ax=>(∀x)(Bx | Ax)}
+2. Ax | Bx ; 1 ADD
+3. Bx | Ax ; 2 COM
+4. (∀x)(Bx | Ax) ; 3 UG
+expect: invalid at 4: UG cannot generalize x, which is free in premise 1
+legacy: the 2018 engine lets UG generalize a variable that is free in a premise
+
+case: ug-e
+source: 2018 test UGETest, corrected
+# Fixed: the 2018 premises were Ax | Bx and ~Ax, with x free, so UG on x was not allowed.
+problem: {(∀x)(Ax | Bx)//(∀x)~Ax=>(∀x)Bx}
+3. Ax | Bx ; 1 UI
+4. ~Ax ; 2 UI
+5. Bx ; 3,4 DS
+6. (∀x)Bx ; 5 UG
+expect: valid
+
+case: ug-e-as-written
+source: 2018 test UGETest, as written
+problem: {Ax | Bx // ~Ax=>(∀x)Bx}
+3. Bx ; 1,2 DS
+4. (∀x)Bx ; 3 UG
+expect: invalid at 4: UG cannot generalize x, which is free in premises 1 and 2
+legacy: the 2018 engine lets UG generalize a variable that is free in a premise
+
+case: ug-f
+source: 2018 test UGFTest, corrected
+# Fixed: the 2018 first premise was A → ~(Bx & C), with x free, so UG on x was not allowed.
+problem: {(∀x)(A → ~(Bx & C))//A & C=>(∀x)~Bx}
+3. A → ~(Bx & C) ; 1 UI
+4. A ; 2 SIMP
+5. ~(Bx & C) ; 3,4 MP
+6. ~Bx | ~C ; 5 DM
+7. C & A ; 2 COM
+8. C ; 7 SIMP
+9. ~~C ; 8 DN
+10. ~C | ~Bx ; 6 COM
+11. ~Bx ; 10,9 DS
+12. (∀x)~Bx ; 11 UG
+expect: valid
+
+case: ug-f-as-written
+source: 2018 test UGFTest, as written
+problem: {A → ~(Bx & C) // A & C=>(∀x)~Bx}
+3. A ; 2 SIMP
+4. ~(Bx & C) ; 1,3 MP
+5. ~Bx | ~C ; 4 DM
+6. C & A ; 2 COM
+7. C ; 6 SIMP
+8. ~~C ; 7 DN
+9. ~C | ~Bx ; 5 COM
+10. ~Bx ; 9,8 DS
+11. (∀x)~Bx ; 10 UG
+expect: invalid at 11: UG cannot generalize x, which is free in premise 1
+legacy: the 2018 engine lets UG generalize a variable that is free in a premise
+
+case: ug-g
+source: 2018 test UGGTest, corrected
+# Fixed: the 2018 conclusion and line 6 had cx, a typo for Cx.
+problem: {(∀x)(Px → Dx)//(∀x)(Dx → Cx)=>(∀x)(Px → Cx)}
+3. Py → Dy ; 1 UI
+4. Dy → Cy ; 2 UI
+5. (Py → Cy) ; 3,4 HS
+6. (∀x)(Px → Cx) ; 5 UG
+expect: valid
+legacy: UG only generalizes the constants a to w, not the variable y
+
+case: ug-h
+source: 2018 test UGHTest, corrected
+# Fixed: line 3 did EI to the variable y; it now uses the constant a.
+problem: {(∀x)(Dx → Cx)//(∃x)(Ax & Dx)=>(∃x)(Ax & Cx)}
+3. (Aa & Da) ; 2 EI
+4. (Da → Ca) ; 1 UI
+5. (Da & Aa) ; 3 COM
+6. Da ; 5 SIMP
+7. Ca ; 4,6 MP
+8. Aa ; 3 SIMP
+9. (Aa & Ca) ; 8,7 CONJ
+10. (∃x)(Ax & Cx) ; 9 EG
+expect: valid
+
+case: ug-h-as-written
+source: 2018 test UGHTest, as written
+problem: {(∀x)(Dx → Cx)//(∃x)(Ax & Dx)=>(∃x)(Ax & Cx)}
+3. (Ay & Dy) ; 2 EI
+4. (Dy → Cy) ; 1 UI
+5. (Dy & Ay) ; 3 COM
+6. Dy ; 5 SIMP
+7. Cy ; 4,6 MP
+8. Ay ; 3 SIMP
+9. (Ay & Cy) ; 8,7 CONJ
+10. (∃x)(Ax & Cx) ; 9 EG
+expect: invalid at 3: EI must use a constant, not the variable y
+
+case: eg-a
+source: 2018 test EGATest
+problem: {Aa=>((∃x)(Ax))}
+2. (∃x)(Ax) ; 1 EG
+expect: valid
+legacy: the 2018 parser drops the quantifier of (∃x)(Ax) and reads Ax
+
+case: eg-b
+source: 2018 test EGBTest
+problem: {Ax=>((∃y)(Ay))}
+2. (∃y)(Ay) ; 1 EG
+expect: valid
+legacy: the 2018 parser drops the quantifier of (∃y)(Ay), and EG only generalizes constants
+
+case: eg-c
+source: 2018 test EGCTest, Copi exercise 8.6, part II, number 3
+problem: {(∃x)(Ax & (∀y)(By → Cxy))//(∃x)Ax → Bj=>(∃x)Cxj}
+3. Aa & (∀y)(By → Cay) ; 1 EI
+4. Aa ; 3 SIMP
+5. (∃x)(Ax) ; 4 EG
+6. Bj ; 2,5 MP
+7. (∀y)(By → Cay) & Aa ; 3 COM
+8. (∀y)(By → Cay) ; 7 SIMP
+9. Bj → Caj ; 8 UI
+10. Caj ; 6,9 MP
+11. (∃x)Cxj ; 10 EG
+expect: valid
+legacy: the 2018 parser drops the quantifier of (∃x)(Ax) in line 5
+
+case: eg-d
+source: 2018 test EGDTest
+problem: {(∀y)(Sy → Wy)//(∀y)Sy=>(∃x)Wx}
+3. Sy → Wy ; 1 UI
+4. Sy ; 2 UI
+5. Wy ; 3,4 MP
+6. (∃x)Wx ; 5 EG
+expect: valid
+legacy: EG only generalizes the constants a to w, not the variable y
+
+case: eg-e
+source: 2018 test EGETest, corrected
+# Fixed: line 3 did EI to the variable y; it now uses the constant a.
+problem: {(∀x)(Jx → Kx)//(∃x)(Jx & Lx)=>(∃x)(Lx & Kx)}
+3. Ja & La ; 2 EI
+4. Ja → Ka ; 1 UI
+5. Ja ; 3 SIMP
+6. La & Ja ; 3 COM
+7. La ; 6 SIMP
+8. Ka ; 4,5 MP
+9. La & Ka ; 7,8 CONJ
+10. (∃x)(Lx & Kx) ; 9 EG
+expect: valid
+
+case: eg-e-as-written
+source: 2018 test EGETest, as written
+problem: {(∀x)(Jx → Kx)//(∃x)(Jx & Lx)=>(∃x)(Lx & Kx)}
+3. Jy & Ly ; 2 EI
+4. Jy → Ky ; 1 UI
+5. Jy ; 3 SIMP
+6. Ly & Jy ; 3 COM
+7. Ly ; 6 SIMP
+8. Ky ; 4,5 MP
+9. Ly & Ky ; 7,8 CONJ
+10. (∃x)(Lx & Kx) ; 9 EG
+expect: invalid at 3: EI must use a constant, not the variable y
+
+case: eg-f
+source: 2018 test EGFTest, corrected
+# Fixed: premise 1 had Aa, a typo for Ax. As written, the argument is not valid.
+problem: {(∀x)((Ax | Bx) → Cx)//(∃x)Ax=>(∃x)Cx}
+3. Aa ; 2 EI
+4. (Aa | Ba) → Ca ; 1 UI
+5. Aa | Ba ; 3 ADD
+6. Ca ; 4,5 MP
+7. (∃x)Cx ; 6 EG
+expect: valid
+
+case: eg-f-as-written
+source: 2018 test EGFTest, as written
+problem: {(∀x)((Aa | Bx) → Cx) //(∃x)Ax=>(∃x)Cx}
+3. Aa ; 2 EI
+4. (Aa | Ba) → Ca ; 1 UI
+5. Aa | Ba ; 3 ADD
+6. Ca ; 4,5 MP
+7. (∃x)Cx ; 6 EG
+expect: invalid at 3: EI needs a new constant, and a occurs in premise 1
+
+case: eg-g
+source: 2018 test EGGTest, corrected
+# Fixed: premise 1 had Aa, a typo for Ax, as in EGFTest.
+problem: {(∀x)((Ax | Bx) → Cx)//(∃x)Bx=>(∃x)Cx}
+3. Ba ; 2 EI
+4. Ba | Aa ; 3 ADD
+5. Aa | Ba ; 4 COM
+6. (Aa | Ba) → Ca ; 1 UI
+7. Ca ; 6,5 MP
+8. (∃x)Cx ; 7 EG
+expect: valid
+
+case: eg-g-as-written
+source: 2018 test EGGTest, as written
+problem: {(∀x)((Aa | Bx) → Cx) //(∃x)Bx=>(∃x)Cx}
+3. Ba ; 2 EI
+4. Ba | Aa ; 3 ADD
+5. Aa | Ba ; 4 COM
+6. (Aa | Ba) → Ca ; 1 UI
+7. Ca ; 6,5 MP
+8. (∃x)Cx ; 7 EG
+expect: invalid at 3: EI needs a new constant, and a occurs in premise 1
+
+case: eg-h
+source: 2018 test EGHTest
+problem: {(∃x)Kx → (∀x)(Lx → Mx)//Kc & Lc =>Mc}
+3. Kc ; 2 SIMP
+4. (∃x)Kx ; 3 EG
+5. (∀x)(Lx → Mx) ; 1,4 MP
+6. Lc & Kc ; 2 COM
+7. Lc ; 6 SIMP
+8. Lc → Mc ; 5 UI
+9. Mc ; 8,7 MP
+expect: valid
+legacy: copied formulas share Constant objects, so EG at line 4 also rewrites line 2 and line 6 fails

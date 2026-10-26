@@ -1,0 +1,3 @@
+# The test corpus is read by the Java tests and, later, by the Rust port.
+# Keep it byte-identical on every platform.
+src/test/resources/corpus/** text eol=lf

@@ -72,6 +72,31 @@ FormulaParser.parse("(P & Q");                 // Failure: column 7, expected ')
 
 The parser takes `~ ¬`, `& ∧ · •`, `| ∨`, `→ -> ⊃` and `↔ <-> ≡`, with that precedence. `&` and `|` group to the left, `→` and `↔` to the right. Sentence and predicate letters are uppercase. `x`, `y` and `z` are variables, and `a` to `w` are constants.
 
+## Semantics
+
+The `semantics` package answers truth-functional questions exactly with truth tables, and looks for finite countermodels when there are quantifiers.
+
+```java
+TruthTable.of(Formula.parse("P → Q"));            // prints as a table of T and F
+Semantics.isTautology(Formula.parse("P | ~P"));   // true
+Semantics.areEquivalent(Formula.parse("P → Q"), Formula.parse("~Q → ~P"));   // true
+NormalForms.cnf(Formula.parse("P → (Q & R)"));    // (~P | Q) & (~P | R)
+
+Tableau.of(List.of(Formula.parse("P → Q"), Formula.parse("P"), Formula.parse("~Q")));
+// P → Q
+// P
+// ~Q
+// ├─ ~P
+// │  ×
+// └─ Q
+//    ×
+
+ModelSearch.countermodel(List.of(Formula.parse("(∀y)(∃x)Lxy")), Formula.parse("(∃x)(∀y)Lxy"), 3);
+// Found: domain {0, 1}; L = {(0, 1), (1, 0)}
+```
+
+`ModelSearch` tries every interpretation over domains of 1, 2, 3… individuals, in a fixed order, until a budget runs out. Finding a countermodel proves an argument invalid; not finding one is only evidence that it is valid.
+
 ## The test corpus
 
 The specification is plain data in [`src/test/resources/corpus`](src/test/resources/corpus): 244 proofs and 83 formulas, each with what the checker or the parser must do with it, in each mode. It holds the 96 proofs of the 2018 tests, some of them corrected, plus wrong proofs that must be rejected and correct ones that must be accepted. Its README describes the format and the rules in detail.

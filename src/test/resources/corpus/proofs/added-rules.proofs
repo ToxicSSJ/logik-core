@@ -27,6 +27,7 @@ source: soundness, rule added in 2026
 problem: {(P → Q) & (R → S)//~P | ~R=>~Q | ~S}
 3. ~Q | ~S ; 1,2 DD
 expect: invalid at 3: DD needs ~Q | ~S and gives ~P | ~R
+argument: invalid
 
 # --- Absorption: p → q ∴ p → (p & q) ---
 
@@ -48,6 +49,7 @@ source: soundness, rule added in 2026
 problem: {P → Q=>Q → (P & Q)}
 2. Q → (P & Q) ; 1 ABS
 expect: invalid at 2: ABS gives P → (P & Q)
+argument: invalid
 
 # --- Quantifier Negation: ~(∀x)Φ ≡ (∃x)~Φ, ~(∃x)Φ ≡ (∀x)~Φ, (∀x)Φ ≡ ~(∃x)~Φ, (∃x)Φ ≡ ~(∀x)~Φ ---
 
@@ -119,6 +121,7 @@ source: soundness, rule added in 2026
 problem: {~(∀x)Fx=>(∀x)~Fx}
 2. (∀x)~Fx ; 1 QN
 expect: invalid at 2: QN turns ~(∀x)Fx into (∃x)~Fx; not every F does not mean every thing is not F
+argument: invalid
 
 case: qn-loses-a-negation
 source: soundness, rule added in 2026

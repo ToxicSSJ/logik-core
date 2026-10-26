@@ -74,6 +74,7 @@ source: 2018 test EIATest, as written
 problem: {(∃x)Ax=>Aa}
 2. Aa ; 1 EI
 expect: invalid at 2: EI needs a new constant, and a occurs in the conclusion
+argument: invalid
 legacy: the 2018 engine does not check the conclusion when EI picks a constant
 
 case: ei-b
@@ -89,6 +90,7 @@ source: 2018 test EIBTest, as written
 problem: {(∃y)Ayyy=>Attt}
 2. Attt ; 1 EI
 expect: invalid at 2: EI needs a new constant, and t occurs in the conclusion
+argument: invalid
 legacy: the 2018 engine does not check the conclusion when EI picks a constant
 
 case: ei-c
@@ -108,6 +110,7 @@ problem: {Ea & (∃y)Ey=>Eb}
 3. (∃y)Ey ; 2 SIMP
 4. Eb ; 3 EI
 expect: invalid at 4: EI needs a new constant, and b occurs in the conclusion
+argument: invalid
 legacy: the 2018 engine does not check the conclusion when EI picks a constant
 
 case: ei-d
@@ -127,6 +130,7 @@ problem: {(∃z)((∀x)Exaz & (∃x)Exxz)=>Eaak}
 3. (∀x)Exak ; 2 SIMP
 4. Eaak ; 3 UI
 expect: invalid at 2: EI needs a new constant, and k occurs in the conclusion
+argument: invalid
 legacy: the 2018 engine does not check the conclusion when EI picks a constant
 
 case: ei-e
@@ -152,6 +156,7 @@ problem: {(∃x)((∀x)Waxs & (∃x)(∃z)Exxz)=>Ejjk}
 5. (∃z)Ejjz ; 4 EI
 6. Ejjk ; 5 EI
 expect: invalid at 5: EI needs a new constant, and j occurs in the conclusion
+argument: invalid
 legacy: the 2018 engine does not check the conclusion when EI picks a constant
 
 case: ug-a
@@ -169,6 +174,7 @@ problem: {Wx & Bx=>(∀x)(Wx)}
 2. Wx ; 1 SIMP
 3. (∀x)(Wx) ; 2 UG
 expect: invalid at 3: UG cannot generalize x, which is free in premise 1
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-b
@@ -184,6 +190,7 @@ source: 2018 test UGBTest, as written
 problem: {Wx & Bx=>(∀x)(Wx & Bx)}
 2. (∀x)(Wx & Bx) ; 1 UG
 expect: invalid at 2: UG cannot generalize x, which is free in premise 1
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-c
@@ -203,6 +210,7 @@ problem: {Ax=>(∀y)(∀x)(Ax | By)}
 3. (∀x)(Ax | By) ; 2 UG
 4. (∀y)(∀x)(Ax | By) ; 3 UG
 expect: invalid at 3: UG cannot generalize x, which is free in premise 1
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-d
@@ -222,6 +230,7 @@ problem: {Ax=>(∀x)(Bx | Ax)}
 3. Bx | Ax ; 2 COM
 4. (∀x)(Bx | Ax) ; 3 UG
 expect: invalid at 4: UG cannot generalize x, which is free in premise 1
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-e
@@ -240,6 +249,7 @@ problem: {Ax | Bx // ~Ax=>(∀x)Bx}
 3. Bx ; 1,2 DS
 4. (∀x)Bx ; 3 UG
 expect: invalid at 4: UG cannot generalize x, which is free in premises 1 and 2
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-f
@@ -271,6 +281,7 @@ problem: {A → ~(Bx & C) // A & C=>(∀x)~Bx}
 10. ~Bx ; 9,8 DS
 11. (∀x)~Bx ; 10 UG
 expect: invalid at 11: UG cannot generalize x, which is free in premise 1
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-g
@@ -397,6 +408,7 @@ problem: {(∀x)((Aa | Bx) → Cx) //(∃x)Ax=>(∃x)Cx}
 6. Ca ; 4,5 MP
 7. (∃x)Cx ; 6 EG
 expect: invalid at 3: EI needs a new constant, and a occurs in premise 1
+argument: invalid
 
 case: eg-g
 source: 2018 test EGGTest, corrected

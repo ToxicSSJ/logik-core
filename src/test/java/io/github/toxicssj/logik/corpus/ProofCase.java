@@ -9,6 +9,8 @@ import io.github.toxicssj.logik.proof.Mode;
  *
  * @param problem    premises and conclusion as {@code {P//Q=>C}}
  * @param steps      the lines after the premises
+ * @param argumentInvalid true if the argument itself is not valid: some model
+ *                   makes every premise true and the conclusion false
  * @param legacyNote why the 2018 engine disagrees with the flexible verdict, or null
  * @param location   file and line where the case starts, for error messages
  */
@@ -19,6 +21,7 @@ public record ProofCase(
         List<Step> steps,
         Verdict strict,
         Verdict flexible,
+        boolean argumentInvalid,
         String legacyNote,
         String location) {
 

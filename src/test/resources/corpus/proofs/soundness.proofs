@@ -8,6 +8,7 @@ source: soundness probe
 problem: {¬P=>P}
 2. P ; 1 DN
 expect: invalid at 2: ¬ is negation, so DN turns ¬P into ~~~P, not into P
+argument: invalid
 legacy: the 2018 parser drops ¬ and reads ¬P as P
 
 # --- Rules of inference ---
@@ -17,6 +18,7 @@ source: soundness probe
 problem: {A → B//~C=>~A}
 3. ~A ; 1,2 MT
 expect: invalid at 3: MT needs ~B, the negation of the consequent B
+argument: invalid
 legacy: MT only checks that one of the two cited lines is a negation
 
 case: mt-denying-the-antecedent
@@ -24,18 +26,21 @@ source: soundness, classic fallacy
 problem: {P → Q//~P=>~Q}
 3. ~Q ; 1,2 MT
 expect: invalid at 3: MT needs ~Q, the negation of the consequent, and gives ~P
+argument: invalid
 
 case: mp-affirming-the-consequent
 source: soundness, classic fallacy
 problem: {P → Q//Q=>P}
 3. P ; 1,2 MP
 expect: invalid at 3: MP needs the antecedent P and gives the consequent Q
+argument: invalid
 
 case: ds-wrong-disjunct
 source: soundness probe
 problem: {A | B//~C=>B}
 3. B ; 1,2 DS
 expect: invalid at 3: DS needs ~A, the negation of a disjunct
+argument: invalid
 legacy: DS only checks that one of the two cited lines is a negation
 
 case: cd-backwards
@@ -43,12 +48,14 @@ source: soundness
 problem: {(A → B) & (C → D)//B | D=>A | C}
 3. A | C ; 1,2 CD
 expect: invalid at 3: CD needs A | C and gives B | D
+argument: invalid
 
 case: simp-from-disjunction
 source: soundness
 problem: {P | Q=>P}
 2. P ; 1 SIMP
 expect: invalid at 2: SIMP needs a conjunction
+argument: invalid
 
 case: mp-repeats-a-line
 source: soundness probe
@@ -65,6 +72,7 @@ source: soundness probe
 problem: {P | (Q | R)=>(P | Q) & (P | R)}
 2. (P | Q) & (P | R) ; 1 DIST
 expect: invalid at 2: DIST needs p | (q & r), and Q | R is not a conjunction
+argument: invalid
 legacy: DIST does not check the inner connective
 
 case: dist-different-factors
@@ -72,6 +80,7 @@ source: soundness probe
 problem: {(P | Q) & (R | S)=>P | (Q & S)}
 2. P | (Q & S) ; 1 DIST
 expect: invalid at 2: DIST needs a common disjunct, and P | Q and R | S share none
+argument: invalid
 legacy: DIST does not check that both sides share a factor
 
 case: exp-on-disjunction
@@ -79,6 +88,7 @@ source: soundness probe
 problem: {(P & Q) | R=>P → (Q → R)}
 2. P → (Q → R) ; 1 EXP
 expect: invalid at 2: EXP needs (p & q) → r, and line 1 is a disjunction
+argument: invalid
 legacy: EXP does not check that the formula is a conditional
 
 case: exp-on-disjunction-2
@@ -86,6 +96,7 @@ source: soundness probe
 problem: {P | (Q → R)=>(P & Q) → R}
 2. (P & Q) → R ; 1 EXP
 expect: invalid at 2: EXP needs p → (q → r), and line 1 is a disjunction
+argument: invalid
 legacy: EXP does not check that the formula is a conditional
 
 case: exp-on-wrong-antecedent
@@ -99,6 +110,7 @@ source: soundness, converse of a conditional
 problem: {P → Q=>Q → P}
 2. Q → P ; 1 COM
 expect: invalid at 2: COM does not apply to →
+argument: invalid
 
 case: assoc-mixed-connectives
 source: soundness
@@ -111,18 +123,21 @@ source: soundness, inverse of a conditional
 problem: {P → Q=>~P → ~Q}
 2. ~P → ~Q ; 1 TRANS
 expect: invalid at 2: TRANS gives ~Q → ~P
+argument: invalid
 
 case: impl-without-negation
 source: soundness
 problem: {P → Q=>P | Q}
 2. P | Q ; 1 IMPL
 expect: invalid at 2: IMPL gives ~P | Q
+argument: invalid
 
 case: dm-keeps-the-connective
 source: soundness
 problem: {~(P & Q)=>~P & ~Q}
 2. ~P & ~Q ; 1 DM
 expect: invalid at 2: DM gives ~P | ~Q
+argument: invalid
 
 case: equiv-one-direction
 source: soundness
@@ -199,6 +214,7 @@ source: soundness probe
 problem: {Fa=>(∀x)Fx}
 2. (∀x)Fx ; 1 UG
 expect: invalid at 2: UG generalizes a variable, and a is a constant
+argument: invalid
 legacy: UG generalizes constants
 
 case: ug-after-ei
@@ -207,6 +223,7 @@ problem: {(∃x)Fx=>(∀x)Fx}
 2. Fa ; 1 EI
 3. (∀x)Fx ; 2 UG
 expect: invalid at 3: UG generalizes a variable, and a is a constant
+argument: invalid
 legacy: UG generalizes constants
 
 case: ug-after-ui-to-constant
@@ -222,6 +239,7 @@ source: soundness
 problem: {Fx=>(∀x)Fx}
 2. (∀x)Fx ; 1 UG
 expect: invalid at 2: UG cannot generalize x, which is free in premise 1
+argument: invalid
 legacy: the 2018 engine lets UG generalize a variable that is free in a premise
 
 case: ug-variable-free-in-ei-line
@@ -232,6 +250,7 @@ problem: {(∀y)(∃x)Lxy=>(∃x)(∀y)Lxy}
 4. (∀y)Lay ; 3 UG
 5. (∃x)(∀y)Lxy ; 4 EG
 expect: invalid at 4: UG cannot generalize y, which is free in line 3, obtained by EI
+argument: invalid
 legacy: UG accepts any (∀y) put in front of a line; the engine does not track which lines come from EI
 
 case: ug-leaves-a-free-occurrence
@@ -240,6 +259,7 @@ problem: {(∀x)Fxx=>(∀x)Fxy}
 2. Fyy ; 1 UI
 3. (∀x)Fxy ; 2 UG
 expect: invalid at 3: UG must replace every free y, and (∀x)Fxy keeps one
+argument: invalid
 
 case: ei-constant-used-in-earlier-line
 source: soundness probe, the classic EI fallacy
@@ -249,6 +269,7 @@ problem: {(∃x)Fx//(∃x)Gx=>(∃x)(Fx & Gx)}
 5. Fa & Ga ; 3,4 CONJ
 6. (∃x)(Fx & Gx) ; 5 EG
 expect: invalid at 4: EI needs a new constant, and a occurs in line 3
+argument: invalid
 
 case: ei-constant-used-in-premise
 source: soundness probe
@@ -257,6 +278,7 @@ problem: {Ga//(∃x)Fx=>(∃x)(Fx & Gx)}
 4. Fa & Ga ; 3,1 CONJ
 5. (∃x)(Fx & Gx) ; 4 EG
 expect: invalid at 3: EI needs a new constant, and a occurs in premise 1
+argument: invalid
 
 case: ei-constant-inside-nested-quantifier
 source: soundness probe
@@ -268,6 +290,7 @@ problem: {P & (∀x)Hxa//(∃x)Fx=>(∃x)(Fx & Hxx)}
 7. Fa & Haa ; 3,6 CONJ
 8. (∃x)(Fx & Hxx) ; 7 EG
 expect: invalid at 3: EI needs a new constant, and a occurs in premise 1, inside (∀x)Hxa
+argument: invalid
 legacy: EI does not look for the constant inside quantified subformulas
 
 case: ei-to-variable
@@ -275,6 +298,7 @@ source: soundness probe
 problem: {(∃x)Fx=>Fy}
 2. Fy ; 1 EI
 expect: invalid at 2: EI must use a constant, not the variable y
+argument: invalid
 legacy: EI accepts a variable
 
 case: ui-capture
@@ -282,6 +306,7 @@ source: soundness probe
 problem: {(∀x)(∃y)Lxy=>(∃y)Lyy}
 2. (∃y)Lyy ; 1 UI
 expect: invalid at 2: putting y for x puts it under (∃y), which captures it
+argument: invalid
 legacy: UI does not check for capture
 
 case: ui-partial
@@ -289,12 +314,14 @@ source: soundness probe
 problem: {(∀x)(Fx → Gx)=>Fa → Gx}
 2. Fa → Gx ; 1 UI
 expect: invalid at 2: UI must replace every free x
+argument: invalid
 
 case: ui-replaces-a-bound-occurrence
 source: soundness probe
 problem: {(∀x)(Fx → (∃x)Gx)=>Fa → (∃x)Ga}
 2. Fa → (∃x)Ga ; 1 UI
 expect: invalid at 2: the x in Gx is bound by (∃x), so UI must leave it alone
+argument: invalid
 
 case: ui-inside-a-line
 source: soundness probe
@@ -307,6 +334,7 @@ source: soundness
 problem: {(∀y)Lay=>(∃y)(∀y)Lyy}
 2. (∃y)(∀y)Lyy ; 1 EG
 expect: invalid at 2: every y in (∀y)Lyy is bound by (∀y), so it is not an instance of line 1
+argument: invalid
 legacy: EG does not check whether an inner quantifier captures the new variable
 
 case: quantifier-swap-by-repetition
@@ -314,6 +342,7 @@ source: soundness probe
 problem: {(∃x)(∀y)Lxy//P=>(∃y)(∀x)Lxy}
 3. (∃y)(∀x)Lxy ; 1,2 MP
 expect: invalid at 3: MP needs a conditional, and (∃y)(∀x)Lxy is not (∃x)(∀y)Lxy
+argument: invalid
 legacy: a rule that does not apply returns its input unchanged, and the engine ignores which variable a quantifier binds
 
 case: bound-variable-matters

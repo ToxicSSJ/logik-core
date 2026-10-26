@@ -30,7 +30,7 @@ public final class Corpus {
     private static final Pattern PARSER_CASE =
             Pattern.compile("(accept|reject) \"([^\"]*)\" ; (.+?)(?: ; legacy: (.+))?");
     private static final Set<String> KEYS =
-            Set.of("case", "source", "problem", "expect", "strict", "flexible", "legacy");
+            Set.of("case", "source", "problem", "expect", "strict", "flexible", "argument", "legacy");
 
     private Corpus() {}
 
@@ -122,7 +122,14 @@ public final class Corpus {
             strict = verdict(required(fields, "strict", where), premises, steps.size(), where);
             flexible = verdict(required(fields, "flexible", where), premises, steps.size(), where);
         }
-        return new ProofCase(id, source, problem, steps, strict, flexible, fields.get("legacy"), where);
+        String argument = fields.get("argument");
+        if (argument != null && !argument.equals("invalid")) {
+            throw new IllegalStateException(where + ": argument: can only be invalid, not " + argument);
+        }
+        if (argument != null && (strict.isValid() || flexible.isValid())) {
+            throw new IllegalStateException(where + ": case " + id + " is a valid proof of an invalid argument");
+        }
+        return new ProofCase(id, source, problem, steps, strict, flexible, argument != null, fields.get("legacy"), where);
     }
 
     private static Verdict verdict(String text, int premises, int steps, String where) {

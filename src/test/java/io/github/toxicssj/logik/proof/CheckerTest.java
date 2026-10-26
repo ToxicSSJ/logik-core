@@ -58,6 +58,25 @@ class CheckerTest {
     }
 
     @Test
+    void checksTheConditionalProofInTheReadme() {
+        Proof proof = Proof.of("{(P & Q) → R=>P → (Q → R)}",
+                "P ; ACP",
+                "Q ; ACP",
+                "P & Q ; 2,3 CONJ",
+                "R ; 1,4 MP",
+                "Q → R ; 3-5 CP",
+                "P → (Q → R) ; 2-6 CP");
+        assertTrue(Checker.check(proof, Mode.STRICT).isValid());
+    }
+
+    @Test
+    void reportsAnOpenSubproof() {
+        Report report = Checker.check(Proof.of("{P → Q=>Q}", "P ; ACP", "Q ; 1,2 MP"), Mode.STRICT);
+        assertTrue(report.firstError().isEmpty());
+        assertEquals(Optional.of("the assumption on line 2 is never discharged"), report.endError());
+    }
+
+    @Test
     void acceptsRuleNamesInAnyCase() {
         assertTrue(Checker.check(Proof.of("{A → B//A=>B}", "B ; 1,2 mp"), Mode.STRICT).isValid());
     }

@@ -41,8 +41,13 @@ public record ProofCase(
         return body(problem).split("=>", -1)[1].strip();
     }
 
+    /** The premises of {@code {P//Q=>C}}; {@code {=>C}} has none. */
     static List<String> premisesOf(String problem) {
-        return List.of(body(problem).split("=>", -1)[0].split("//", -1)).stream()
+        String premises = body(problem).split("=>", -1)[0];
+        if (premises.isBlank()) {
+            return List.of();
+        }
+        return List.of(premises.split("//", -1)).stream()
                 .map(String::strip)
                 .toList();
     }

@@ -1,0 +1,232 @@
+# Conditional proof (CP) and indirect proof (IP), which the 2018 engine did
+# not have. ACP and AIP open a subproof with an assumption; CP and IP close
+# the innermost open one on the next line, citing it as a range. The lines of
+# a subproof are indented here only to make them easier to read.
+# The format is described in ../README.md.
+
+# --- Conditional proof: assumption p, ..., q ∴ p → q ---
+
+case: cp-absorption
+source: CP added in 2026
+problem: {P → Q=>P → (P & Q)}
+2.   P ; ACP
+3.   Q ; 1,2 MP
+4.   P & Q ; 2,3 CONJ
+5. P → (P & Q) ; 2-4 CP
+expect: valid
+
+case: cp-irrelevant-antecedent
+source: CP added in 2026
+problem: {Q=>P → Q}
+2.   P ; ACP
+3.   Q & P ; 1,2 CONJ
+4.   Q ; 3 SIMP
+5. P → Q ; 2-4 CP
+expect: valid
+
+case: cp-nested
+source: CP added in 2026, proving exportation
+problem: {(P & Q) → R=>P → (Q → R)}
+2.   P ; ACP
+3.     Q ; ACP
+4.     P & Q ; 2,3 CONJ
+5.     R ; 1,4 MP
+6.   Q → R ; 3-5 CP
+7. P → (Q → R) ; 2-6 CP
+expect: valid
+
+case: cp-theorem-identity
+source: CP added in 2026, a theorem with no premises
+problem: {=>P → P}
+1.   P ; ACP
+2. P → P ; 1-1 CP
+expect: valid
+
+case: cp-theorem-hypothetical-syllogism
+source: CP added in 2026, a theorem with no premises
+problem: {=>(P → Q) → ((Q → R) → (P → R))}
+1.   P → Q ; ACP
+2.     Q → R ; ACP
+3.     P → R ; 1,2 HS
+4.   (Q → R) → (P → R) ; 2-3 CP
+5. (P → Q) → ((Q → R) → (P → R)) ; 1-4 CP
+expect: valid
+
+case: cp-with-ug
+source: CP added in 2026
+problem: {(∀x)(Fx → Gx)=>(∀x)Fx → (∀x)Gx}
+2.   (∀x)Fx ; ACP
+3.   Fy ; 2 UI
+4.   Fy → Gy ; 1 UI
+5.   Gy ; 4,3 MP
+6.   (∀x)Gx ; 5 UG
+7. (∀x)Fx → (∀x)Gx ; 2-6 CP
+expect: valid
+
+case: cp-then-ug
+source: CP added in 2026
+problem: {(∀x)(Fx → Gx)//(∀x)(Gx → Hx)=>(∀x)(Fx → Hx)}
+3.   Fy ; ACP
+4.   Fy → Gy ; 1 UI
+5.   Gy ; 4,3 MP
+6.   Gy → Hy ; 2 UI
+7.   Hy ; 6,5 MP
+8. Fy → Hy ; 3-7 CP
+9. (∀x)(Fx → Hx) ; 8 UG
+expect: valid
+
+# --- Indirect proof: assumption p, ..., q & ~q ∴ ~p (or q when p is ~q) ---
+
+case: ip-basic
+source: IP added in 2026
+problem: {P → Q//P → ~Q=>~P}
+3.   P ; AIP
+4.   Q ; 1,3 MP
+5.   ~Q ; 2,3 MP
+6.   Q & ~Q ; 4,5 CONJ
+7. ~P ; 3-6 IP
+expect: valid
+
+case: ip-negated-assumption
+source: IP added in 2026
+problem: {P | Q//~Q=>P}
+3.   ~P ; AIP
+4.   Q ; 1,3 DS
+5.   Q & ~Q ; 4,2 CONJ
+6. P ; 3-5 IP
+expect: valid
+
+case: ip-excluded-middle
+source: IP added in 2026, a theorem with no premises
+problem: {=>P | ~P}
+1.   ~(P | ~P) ; AIP
+2.   ~P & ~~P ; 1 DM
+3. P | ~P ; 1-2 IP
+expect: valid
+
+case: ip-contradiction-reversed
+source: IP added in 2026
+problem: {P → Q//P → ~Q=>~P}
+3.   P ; AIP
+4.   Q ; 1,3 MP
+5.   ~Q ; 2,3 MP
+6.   ~Q & Q ; 5,4 CONJ
+7. ~P ; 3-6 IP
+strict: invalid at 7: IP needs the subproof to end in p & ~p, and ~Q & Q has the negation first
+flexible: valid
+
+case: ip-with-quantifiers
+source: IP added in 2026
+problem: {(∀x)(Fx → Gx)//(∃x)Fx=>(∃x)Gx}
+3.   ~(∃x)Gx ; AIP
+4.   (∀x)~Gx ; 3 QN
+5.   Fa ; 2 EI
+6.   Fa → Ga ; 1 UI
+7.   Ga ; 6,5 MP
+8.   ~Ga ; 4 UI
+9.   Ga & ~Ga ; 7,8 CONJ
+10. (∃x)Gx ; 3-9 IP
+expect: valid
+
+# --- Scope errors ---
+
+case: cite-inside-closed-subproof
+source: soundness, CP added in 2026
+problem: {P → Q=>Q}
+2.   P ; ACP
+3.   Q ; 1,2 MP
+4. P → Q ; 2-3 CP
+5. Q ; 1,2 MP
+expect: invalid at 5: line 2 is inside the subproof on lines 2-3, which is closed
+
+case: assumption-never-discharged
+source: soundness, CP added in 2026
+problem: {P → Q=>Q}
+2.   P ; ACP
+3.   Q ; 1,2 MP
+expect: invalid at end: the assumption on line 2 is never discharged
+
+case: cp-from-a-line-that-is-not-an-assumption
+source: soundness, CP added in 2026
+problem: {Q=>P → Q}
+2.   P ; ACP
+3.   Q & P ; 1,2 CONJ
+4.   Q ; 3 SIMP
+5. P → Q ; 3-4 CP
+expect: invalid at 5: line 3 is not an assumption, so no subproof starts there
+
+case: cp-range-ends-early
+source: soundness, CP added in 2026
+problem: {Q=>P → Q}
+2.   P ; ACP
+3.   Q & P ; 1,2 CONJ
+4.   Q ; 3 SIMP
+5. P → (Q & P) ; 2-3 CP
+expect: invalid at 5: CP closes the subproof right after its last line, so the range must end at line 4
+
+case: cp-wrong-conditional
+source: soundness, CP added in 2026
+problem: {Q=>P → Q}
+2.   P ; ACP
+3.   Q & P ; 1,2 CONJ
+4.   Q ; 3 SIMP
+5. Q → P ; 2-4 CP
+expect: invalid at 5: CP on lines 2-4 gives P → Q
+
+case: cp-closes-the-outer-subproof-first
+source: soundness, CP added in 2026
+problem: {(P & Q) → R=>P → (Q → R)}
+2.   P ; ACP
+3.     Q ; ACP
+4.     P & Q ; 2,3 CONJ
+5.     R ; 1,4 MP
+6. P → R ; 2-5 CP
+expect: invalid at 6: the assumption on line 3 is still open; close its subproof first
+
+case: cp-closes-a-subproof-twice
+source: soundness, CP added in 2026
+problem: {Q=>P → Q}
+2.   P ; ACP
+3.   Q & P ; 1,2 CONJ
+4.   Q ; 3 SIMP
+5. P → Q ; 2-4 CP
+6. P → Q ; 2-5 CP
+expect: invalid at 6: the subproof that starts on line 2 is already closed
+
+case: cp-cites-a-line
+source: soundness, CP added in 2026
+problem: {=>P → P}
+1.   P ; ACP
+2. P → P ; 1 CP
+expect: invalid at 2: CP cites the subproof it closes, as a range like 3-5
+
+case: acp-with-a-citation
+source: soundness, CP added in 2026
+problem: {P=>P → P}
+2.   P ; 1 ACP
+3. P → P ; 2-2 CP
+expect: invalid at 2: ACP cites no lines
+
+case: range-for-another-rule
+source: soundness, CP added in 2026
+problem: {P//Q=>P & Q}
+3. P & Q ; 1-2 CONJ
+expect: invalid at 3: only CP and IP cite a range of lines
+
+case: ip-without-contradiction
+source: soundness, IP added in 2026
+problem: {P | Q=>P}
+2.   ~P ; AIP
+3.   Q ; 1,2 DS
+4. P ; 2-3 IP
+expect: invalid at 4: IP needs the subproof to end in a contradiction, p & ~p, and line 3 is not one
+
+case: ug-free-in-open-assumption
+source: soundness, CP added in 2026
+problem: {(∀x)(Fx → Gx)=>Fy → (∀x)Gx}
+2.   Fy ; ACP
+3.   Fy → Gy ; 1 UI
+4.   Gy ; 3,2 MP
+5.   (∀x)Gx ; 4 UG
+6. Fy → (∀x)Gx ; 2-5 CP
+expect: invalid at 5: UG cannot generalize y, which is free in the assumption on line 2

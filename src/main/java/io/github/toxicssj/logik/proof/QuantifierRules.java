@@ -24,8 +24,8 @@ import io.github.toxicssj.logik.syntax.Variable;
  *     occurs nowhere before: not in the premises, the conclusion or an earlier
  *     line.</li>
  * <li>UG: {@code Φy} gives {@code (∀x)Φx} only for a variable {@code y} that is
- *     free in no premise and no line obtained by EI, and every free {@code y}
- *     must become {@code x}.</li>
+ *     free in no premise, no open assumption and no line obtained by EI, and
+ *     every free {@code y} must become {@code x}.</li>
  * <li>EG: {@code Φν} gives {@code (∃x)Φx} when putting ν for {@code x} in Φx
  *     gives back Φν; some occurrences of ν may stay.</li>
  * </ul>
@@ -34,11 +34,13 @@ final class QuantifierRules {
 
     private QuantifierRules() {}
 
-    static Optional<String> check(Rule rule, Cited cited, Formula line, Mode mode, Proof proof, int number) {
+    /** {@code open} holds the lines of the assumptions still open at line {@code number}. */
+    static Optional<String> check(Rule rule, Cited cited, Formula line, Mode mode, Proof proof, int number,
+            List<Integer> open) {
         return switch (rule) {
             case UI -> universalInstantiation(cited, line, mode);
             case EI -> existentialInstantiation(cited, line, mode, proof, number);
-            case UG -> universalGeneralization(cited, line, mode, proof, number);
+            case UG -> universalGeneralization(cited, line, mode, proof, number, open);
             case EG -> existentialGeneralization(cited, line, mode);
             default -> throw new IllegalArgumentException(rule + " is not a quantification rule");
         };
@@ -92,7 +94,8 @@ final class QuantifierRules {
         return Optional.of("EI needs a line that starts with ∃");
     }
 
-    private static Optional<String> universalGeneralization(Cited cited, Formula line, Mode mode, Proof proof, int number) {
+    private static Optional<String> universalGeneralization(Cited cited, Formula line, Mode mode, Proof proof, int number,
+            List<Integer> open) {
         Formula instance = cited.formula();
         for (Formula view : views(line, mode)) {
             if (view instanceof ForAll(Variable x, Formula body)) {
@@ -107,7 +110,7 @@ final class QuantifierRules {
                     }
                     String restriction = !y.equals(x) && line.freeVariables().contains(y)
                             ? "UG must replace every free " + y + ", and " + y + " is still free in this line"
-                            : restriction(y, proof, number);
+                            : restriction(y, proof, number, open);
                     if (restriction == null) {
                         return Optional.empty();
                     }
@@ -180,11 +183,16 @@ final class QuantifierRules {
     }
 
     /** Why UG cannot generalize {@code y} at line {@code number}, or null if it can. */
-    private static String restriction(Variable y, Proof proof, int number) {
+    private static String restriction(Variable y, Proof proof, int number, List<Integer> open) {
         List<Formula> premises = proof.problem().premises();
         for (int i = 0; i < premises.size(); i++) {
             if (premises.get(i).freeVariables().contains(y)) {
                 return "UG cannot generalize " + y + ", which is free in premise " + (i + 1);
+            }
+        }
+        for (int assumption : open) {
+            if (proof.line(assumption).freeVariables().contains(y)) {
+                return "UG cannot generalize " + y + ", which is free in the assumption on line " + assumption;
             }
         }
         for (int line = proof.firstStep(); line < number; line++) {

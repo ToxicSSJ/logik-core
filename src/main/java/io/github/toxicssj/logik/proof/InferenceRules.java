@@ -31,6 +31,8 @@ final class InferenceRules {
             case DS -> disjunctiveSyllogism(cited.get(0), cited.get(1), line, mode);
             case HS -> hypotheticalSyllogism(cited.get(0), cited.get(1), line, mode);
             case CD -> constructiveDilemma(cited.get(0), cited.get(1), line, mode);
+            case DD -> destructiveDilemma(cited.get(0), cited.get(1), line, mode);
+            case ABS -> absorption(cited.get(0), line, mode);
             default -> throw new IllegalArgumentException(rule + " is not a rule of inference");
         };
     }
@@ -189,6 +191,43 @@ final class InferenceRules {
             return Optional.of("CD needs a conjunction of two conditionals");
         }
         return Optional.of(reason);
+    }
+
+    /** (p → q) & (r → s), ~q | ~s ∴ ~p | ~r */
+    private static Optional<String> destructiveDilemma(Cited a, Cited b, Formula line, Mode mode) {
+        String reason = null;
+        for (Cited[] pair : orders(a, b)) {
+            for (Formula view : views(pair[0].formula(), mode)) {
+                if (view instanceof And(Implies(Formula p, Formula q), Implies(Formula r, Formula s))) {
+                    Formula needs = new Or(new Not(q), new Not(s));
+                    Formula gives = new Or(new Not(p), new Not(r));
+                    if (same(pair[1].formula(), needs, mode) && same(line, gives, mode)) {
+                        return Optional.empty();
+                    }
+                    if (reason == null) {
+                        reason = "DD with line " + pair[0].line() + " needs " + needs + " and gives " + gives;
+                    }
+                }
+            }
+        }
+        if (reason == null) {
+            return Optional.of("DD needs a conjunction of two conditionals");
+        }
+        return Optional.of(reason);
+    }
+
+    /** p → q ∴ p → (p & q) */
+    private static Optional<String> absorption(Cited c, Formula line, Mode mode) {
+        for (Formula view : views(c.formula(), mode)) {
+            if (view instanceof Implies(Formula p, Formula q)) {
+                Formula gives = new Implies(p, new And(p, q));
+                if (same(line, gives, mode)) {
+                    return Optional.empty();
+                }
+                return Optional.of("ABS turns line " + c.line() + " into " + gives);
+            }
+        }
+        return Optional.of("ABS needs a conditional, and line " + c.line() + " is not one");
     }
 
     private static Cited[][] orders(Cited a, Cited b) {

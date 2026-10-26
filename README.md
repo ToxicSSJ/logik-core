@@ -36,11 +36,28 @@ The restrictions on the quantifier rules are the same in both modes.
 
 | Kind | Rules |
 |---|---|
-| Inference | CONJ, SIMP, ADD, MP, MT, DS, HS, CD |
-| Replacement | DN, DM, COM, ASSOC, DIST, TRANS, IMPL, EQUIV, EXP, TAUT |
+| Inference | CONJ, SIMP, ADD, MP, MT, DS, HS, CD, DD, ABS |
+| Replacement | DN, DM, COM, ASSOC, DIST, TRANS, IMPL, EQUIV, EXP, TAUT, QN |
 | Quantification | UI, EI, UG, EG |
+| Subproofs | ACP, AIP, CP, IP |
 
-Rules of inference apply to whole lines, and the cited lines may come in any order. Rules of replacement rewrite one subformula, anywhere in the line. EI needs a constant that occurs nowhere before, conclusion included. UG needs a variable that is not free in any premise or any line obtained by EI.
+Rules of inference apply to whole lines, and the cited lines may come in any order. Rules of replacement rewrite one subformula, anywhere in the line. EI needs a constant that occurs nowhere before, conclusion included. UG needs a variable that is not free in any premise, open assumption or line obtained by EI.
+
+### Conditional and indirect proof
+
+`ACP` or `AIP` opens a subproof with an assumption. `CP` or `IP` closes the innermost one on the next line, citing it as a range:
+
+```java
+Proof proof = Proof.of("{(P & Q) → R=>P → (Q → R)}",
+        "P ; ACP",
+        "Q ; ACP",
+        "P & Q ; 2,3 CONJ",
+        "R ; 1,4 MP",
+        "Q → R ; 3-5 CP",
+        "P → (Q → R) ; 2-6 CP");
+```
+
+CP gives `assumption → last line`. IP needs the last line to be a contradiction, `q & ~q`, and gives the negation of the assumption. A line inside a closed subproof cannot be cited again, and every subproof must be closed before the end.
 
 ## Formulas
 
@@ -57,7 +74,7 @@ The parser takes `~ ¬`, `& ∧ · •`, `| ∨`, `→ -> ⊃` and `↔ <-> ≡`
 
 ## The test corpus
 
-The specification is plain data in [`src/test/resources/corpus`](src/test/resources/corpus): 202 proofs and 83 formulas, each with what the checker or the parser must do with it, in each mode. It holds the 96 proofs of the 2018 tests, some of them corrected, plus wrong proofs that must be rejected and correct ones that must be accepted. Its README describes the format and the rules in detail.
+The specification is plain data in [`src/test/resources/corpus`](src/test/resources/corpus): 244 proofs and 83 formulas, each with what the checker or the parser must do with it, in each mode. It holds the 96 proofs of the 2018 tests, some of them corrected, plus wrong proofs that must be rejected and correct ones that must be accepted. Its README describes the format and the rules in detail.
 
 ## History
 

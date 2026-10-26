@@ -9,11 +9,14 @@ import java.util.Optional;
 import io.github.toxicssj.logik.syntax.Formula;
 import io.github.toxicssj.logik.syntax.Formula.And;
 import io.github.toxicssj.logik.syntax.Formula.Binary;
+import io.github.toxicssj.logik.syntax.Formula.Exists;
+import io.github.toxicssj.logik.syntax.Formula.ForAll;
 import io.github.toxicssj.logik.syntax.Formula.Iff;
 import io.github.toxicssj.logik.syntax.Formula.Implies;
 import io.github.toxicssj.logik.syntax.Formula.Not;
 import io.github.toxicssj.logik.syntax.Formula.Or;
 import io.github.toxicssj.logik.syntax.Formula.Quantified;
+import io.github.toxicssj.logik.syntax.Variable;
 
 /**
  * The rules of replacement. A step rewrites one subformula of the cited line
@@ -206,6 +209,33 @@ final class ReplacementRules {
                 }
                 if (f instanceof Or(Formula p, Formula q) && same(p, q, mode)) {
                     out.add(p);
+                }
+            }
+            case QN -> {
+                // ~(∀x)Φ ≡ (∃x)~Φ, ~(∃x)Φ ≡ (∀x)~Φ, (∀x)Φ ≡ ~(∃x)~Φ, (∃x)Φ ≡ ~(∀x)~Φ
+                if (f instanceof Not(ForAll(Variable x, Formula body))) {
+                    out.add(new Exists(x, new Not(body)));
+                }
+                if (f instanceof Exists(Variable x, Not(Formula body))) {
+                    out.add(new Not(new ForAll(x, body)));
+                }
+                if (f instanceof Not(Exists(Variable x, Formula body))) {
+                    out.add(new ForAll(x, new Not(body)));
+                }
+                if (f instanceof ForAll(Variable x, Not(Formula body))) {
+                    out.add(new Not(new Exists(x, body)));
+                }
+                if (f instanceof ForAll(Variable x, Formula body)) {
+                    out.add(new Not(new Exists(x, new Not(body))));
+                }
+                if (f instanceof Not(Exists(Variable x, Not(Formula body)))) {
+                    out.add(new ForAll(x, body));
+                }
+                if (f instanceof Exists(Variable x, Formula body)) {
+                    out.add(new Not(new ForAll(x, new Not(body))));
+                }
+                if (f instanceof Not(ForAll(Variable x, Not(Formula body)))) {
+                    out.add(new Exists(x, body));
                 }
             }
             default -> throw new IllegalArgumentException(rule + " is not a rule of replacement");

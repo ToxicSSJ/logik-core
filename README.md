@@ -11,13 +11,13 @@ El código actual es el original de 2018, hecho en primer semestre de Ingenierí
 
 ## Compilar y probar
 
-Requiere Java 17 o superior y Maven:
+Requiere Java 17 o superior. El Maven Wrapper descarga la versión fijada de Maven:
 
 ```sh
-mvn verify
+./mvnw verify
 ```
 
-La CI de GitHub Actions corre los tests en cada push y pull request, con Java 17 y 21.
+La CI de GitHub Actions corre los tests en cada push y pull request, con Java 17, 21 y 25.
 
 ## Licencia
 

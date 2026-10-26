@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.UUID;
 
 import com.magmaticcode.logikcore.propositional.formula.Action;
-import org.apache.commons.lang3.StringUtils;
+import com.magmaticcode.logikcore.util.Strings;
 
 import com.magmaticcode.logikcore.propositional.formula.Constant;
 import com.magmaticcode.logikcore.propositional.formula.Formula;
@@ -60,7 +60,7 @@ public class FormulaBuilder {
 		StringBuilder cache = new StringBuilder();
 		
 		if(nodes.size() == 1)
-			return StringUtils.join(attached, "") + (nodes.get(0).workWithParenthisis() && parentheses ? "(" + nodes.get(0).toString() + ")" : nodes.get(0).toString());
+			return Strings.join(attached, "") + (nodes.get(0).workWithParenthisis() && parentheses ? "(" + nodes.get(0).toString() + ")" : nodes.get(0).toString());
 		
 		for(int i = 0; i < nodes.size(); i++) {
 			
@@ -83,7 +83,7 @@ public class FormulaBuilder {
 			
 		}
 		
-		return StringUtils.join(attached, "") + (parentheses ? "(" + cache.toString() + ")" : cache.toString());
+		return Strings.join(attached, "") + (parentheses ? "(" + cache.toString() + ")" : cache.toString());
 		
 	}
 	
@@ -94,7 +94,7 @@ public class FormulaBuilder {
 		
 		if(FormulaBalancer.areParenthesesBalanced(formula.toString()))
 			if(formula.startsWith("(") && formula.endsWith(")"))
-				cache = formula.substring(StringUtils.indexOf(formula, "(") + 1, StringUtils.lastIndexOf(formula, ")"));
+				cache = formula.substring(Strings.indexOf(formula, "(") + 1, Strings.lastIndexOf(formula, ")"));
 		
 		for(Node n : f1.getNodes())
 			if(!cache.contains(n.toString()))

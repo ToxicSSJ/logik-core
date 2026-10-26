@@ -104,6 +104,12 @@ problem: {R → (P & Q)=>R → (Q & P)}
 2. R → (Q & P) ; 1 COM
 expect: valid
 
+case: assoc-conjunction
+source: completeness probe
+problem: {(P & Q) & R=>P & (Q & R)}
+2. P & (Q & R) ; 1 ASSOC
+expect: valid
+
 case: assoc-disjunction
 source: completeness
 problem: {(P | Q) | R=>P | (Q | R)}

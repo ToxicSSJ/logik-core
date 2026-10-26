@@ -6,9 +6,9 @@ A propositional and predicate logic library: a formula parser and a natural-dedu
 
 The current code is the original from 2018, written during a first semester of Systems Engineering. It is kept under the [`legacy-2018`](https://github.com/ToxicSSJ/logik-core/tree/legacy-2018) tag and is being rewritten.
 
-The tests are a corpus of plain data in [`src/test/resources/corpus`](src/test/resources/corpus): 201 proofs and 83 formulas, each with what a checker or parser must do with it. It holds the 96 proofs of the 2018 tests, some of them corrected, plus wrong proofs that must be rejected and correct ones that must be accepted. Its README describes the format and the rules.
+The tests are a corpus of plain data in [`src/test/resources/corpus`](src/test/resources/corpus): 202 proofs and 83 formulas, each with what a checker or parser must do with it. It holds the 96 proofs of the 2018 tests, some of them corrected, plus wrong proofs that must be rejected and correct ones that must be accepted. Its README describes the format and the rules.
 
-The 2018 engine gets 117 of those 284 cases wrong. Each one carries a note with the reason and is reported as skipped.
+The 2018 engine gets 117 of those 285 cases wrong. Each one carries a note with the reason and is reported as skipped.
 
 ## Build and test
 

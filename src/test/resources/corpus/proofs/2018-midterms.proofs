@@ -1,0 +1,108 @@
+# Proofs from the 2018 test suite (PropositionalTests.java) taken from
+# students' first midterm exams. The format is described in ../README.md.
+#
+# The 2018 file also had parcial1ManuelSierraTuesday, commented out and
+# unfinished: {(S → K) & (U → V)//W → (S | U)=>W → (T | V)}. It is not
+# here because that argument is not valid (W, S, K true and T, U, V false
+# make the premises true and the conclusion false), so it was probably
+# copied with a typo.
+
+case: midterm-1-manuel-sierra-tuesday-2
+source: 2018 test parcial1ManuelSierraTuesday2, first midterm
+problem: {S → (T → U)//U → ~U//(V → S) & (W → T)=>V → ~W}
+4. ~U | ~U ; 2 IMPL
+5. ~U ; 4 TAUT
+6. (S & T) → U ; 1 EXP
+7. ~(S & T) ; 6,5 MT
+8. ~S | ~T ; 7 DM
+9. (W → T) & (V → S) ; 3 COM
+10. W → T ; 9 SIMP
+11. S → ~T ; 8 IMPL
+12. V → S ; 3 SIMP
+13. V → ~T ; 12,11 HS
+14. ~T → ~W ; 10 TRANS
+15. V → ~W ; 13,14 HS
+expect: valid
+
+case: midterm-1-manuel-sierra-tuesday-3
+source: 2018 test parcial1ManuelSierraTuesday3, first midterm, corrected
+# Fixed: the last line was ~L & N by 4,13 CONJ, but the conclusion is ~L | N.
+problem: {(L | M) | (N & O)//(~L & O) & ~(~L & M)=>~L | N}
+3. ~L & O ; 2 SIMP
+4. ~L ; 3 SIMP
+5. ~(~L & M) & (~L & O) ; 2 COM
+6. ~(~L & M) ; 5 SIMP
+7. (~~L | ~M) ; 6 DM
+8. L | ~M ; 7 DN
+9. ~M ; 8,4 DS
+10. ~L & ~M ; 4,9 CONJ
+11. ~(L | M) ; 10 DM
+12. N & O ; 1,11 DS
+13. N ; 12 SIMP
+14. ~L | N ; 4 ADD
+expect: valid
+legacy: DM collapses the double negation, so it gives L | ~M instead of ~~L | ~M at line 7
+
+case: midterm-1-manuel-sierra-tuesday-3-as-written
+source: 2018 test parcial1ManuelSierraTuesday3, first midterm, as written
+problem: {(L | M) | (N & O)//(~L & O) & ~(~L & M)=>~L | N}
+3. ~L & O ; 2 SIMP
+4. ~L ; 3 SIMP
+5. ~(~L & M) & (~L & O) ; 2 COM
+6. ~(~L & M) ; 5 SIMP
+7. (~~L | ~M) ; 6 DM
+8. L | ~M ; 7 DN
+9. ~M ; 8,4 DS
+10. ~L & ~M ; 4,9 CONJ
+11. ~(L | M) ; 10 DM
+12. N & O ; 1,11 DS
+13. N ; 12 SIMP
+14. ~L & N ; 4,13 CONJ
+expect: invalid at end: the last line is ~L & N, and the conclusion is ~L | N
+
+case: midterm-1-rene-alejandro-tuesday
+source: 2018 test parcial1RenéAlejandrotuesday, first midterm, corrected
+# Fixed: redone step by step. The 2018 proof had DIST results with the
+# disjuncts swapped (lines 7 and 12) and cited the wrong line from step 13 on.
+problem: {~(S & T) → ~(A & (S | T))=>~(T → S) → ~A}
+2. (A & (S | T)) → (S & T) ; 1 TRANS
+3. ((A & S) | (A & T)) → (S & T) ; 2 DIST
+4. ~((A & S) | (A & T)) | (S & T) ; 3 IMPL
+5. (~(A & S) & ~(A & T)) | (S & T) ; 4 DM
+6. (S & T) | (~(A & S) & ~(A & T)) ; 5 COM
+7. ((S & T) | ~(A & S)) & ((S & T) | ~(A & T)) ; 6 DIST
+8. ((S & T) | ~(A & T)) & ((S & T) | ~(A & S)) ; 7 COM
+9. (S & T) | ~(A & T) ; 8 SIMP
+10. ~(A & T) | (S & T) ; 9 COM
+11. (~A | ~T) | (S & T) ; 10 DM
+12. ((~A | ~T) | S) & ((~A | ~T) | T) ; 11 DIST
+13. (~A | ~T) | S ; 12 SIMP
+14. ~(A & T) | S ; 13 DM
+15. (A & T) → S ; 14 IMPL
+16. A → (T → S) ; 15 EXP
+17. ~(T → S) → ~A ; 16 TRANS
+expect: valid
+legacy: DIST never turns p | (q & r) into (p | q) & (p | r)
+
+case: midterm-1-rene-alejandro-tuesday-as-written
+source: 2018 test parcial1RenéAlejandrotuesday, first midterm, as written
+problem: {~(S & T) → ~(A & (S | T))=>~(T → S) → ~A}
+2. (A & (S | T)) → (S & T) ; 1 TRANS
+3. ((A & S) | (A & T)) → (S & T) ; 2 DIST
+4. ~((A & S) | (A & T)) | (S & T) ; 3 IMPL
+5. (~(A & S) & ~(A & T)) | (S & T) ; 4 DM
+6. (S & T) | (~(A & S) & ~(A & T)) ; 5 COM
+7. (~(A & S) | (S & T)) & (~(A & T) | (S & T)) ; 6 DIST
+8. ~(A & S) | (S & T) ; 7 SIMP
+9. (~(A & T) | (S & T)) & (~(A & S) | (S & T)) ; 7 COM
+10. ~(A & T) | (S & T) ; 9 SIMP
+11. (~A | ~T) | (S & T) ; 10 DM
+12. (S | (~A | ~T)) & (T | (~A | ~T)) ; 11 DIST
+13. S | (~A | ~T) ; 11 SIMP
+14. (~A | ~T) | S ; 12 COM
+15. ~(A & T) | S ; 13 DM
+16. (A & T) → S ; 14 IMPL
+17. A → (T → S) ; 15 EXP
+18. ~(T → S) → ~A ; 16 TRANS
+strict: invalid at 7: DIST gives ((S & T) | ~(A & S)) & ((S & T) | ~(A & T)), with each disjunct the other way round
+flexible: invalid at 13: SIMP needs a conjunction, and line 11 is a disjunction

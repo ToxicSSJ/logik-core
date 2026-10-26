@@ -2,7 +2,7 @@ package com.magmaticcode.logikcore.propositional.builder;
 
 import java.util.LinkedList;
 
-import org.apache.commons.lang3.StringUtils;
+import com.magmaticcode.logikcore.util.Strings;
 
 import com.magmaticcode.logikcore.propositional.bundle.proof.Proof;
 import com.magmaticcode.logikcore.propositional.bundle.proof.ProofLine;
@@ -15,7 +15,7 @@ public class ProofParser {
 	
 	public static Proof fromString(String data) {
 		
-		String strexcercise = StringUtils.substringBetween(data, "{", "}");
+		String strexcercise = Strings.substringBetween(data, "{", "}");
 		
 		String[] strcomponent = strexcercise.split("=>");
 		String[] strpremises = strcomponent[0].split("//");

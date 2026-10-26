@@ -3,7 +3,7 @@ package com.magmaticcode.logikcore.propositional.formula;
 import java.util.LinkedList;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
+import com.magmaticcode.logikcore.util.Strings;
 
 import com.magmaticcode.logikcore.propositional.exception.formula.ConstantException;
 import com.magmaticcode.logikcore.propositional.exception.formula.ConstantException.ConstantExceptionType;
@@ -125,7 +125,7 @@ public class Variable extends Node {
 	
 	@Override
 	public String toString() {
-		return String.valueOf(variableChar + (constants.size() > 0 ? StringUtils.join(constants, "") : ""));
+		return String.valueOf(variableChar + (constants.size() > 0 ? Strings.join(constants, "") : ""));
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import com.magmaticcode.logikcore.propositional.builder.FormulaParser;
 import com.magmaticcode.logikcore.propositional.bundle.type.CategoryType;
 import com.magmaticcode.logikcore.propositional.exception.PropositionalLogicException;
 import com.magmaticcode.logikcore.propositional.formula.Formula;
-import org.apache.commons.lang3.StringUtils;
+import com.magmaticcode.logikcore.util.Strings;
 
 public class ProofLine {
 
@@ -40,7 +40,7 @@ public class ProofLine {
 	public static ProofLine fromString(String proof) {
 		
 		if(proof.contains("#"))
-			if(StringUtils.countMatches(proof, "#") != 1)
+			if(Strings.countMatches(proof, "#") != 1)
 				throw new PropositionalLogicException("La sintaxis está mal formulada.");
 		
 		String[] splice = proof.split("#");
